@@ -1,0 +1,8 @@
+{
+  "name": "march-madness-draft-dashboard",
+  "version": "1.0.0",
+  "description": "NCAA March Madness to NBA/WNBA Draft Projection Dashboard",
+  "scripts": {
+    "dev": "npx serve public -l 3000 -s"
+  }
+}

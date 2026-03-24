@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>March Madness Draft Command Center 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="data.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0a0e1a;
+      --bg-secondary: #111827;
+      --bg-card: #1a2035;
+      --bg-card-hover: #1e2642;
+      --border: #2a3450;
+      --text-primary: #f0f4ff;
+      --text-secondary: #8899bb;
+      --text-muted: #556688;
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-purple: #8b5cf6;
+      --accent-green: #10b981;
+      --accent-orange: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-pink: #ec4899;
+      --gradient-1: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      --gradient-2: linear-gradient(135deg, #06b6d4, #10b981);
+      --gradient-3: linear-gradient(135deg, #f59e0b, #ef4444);
+      --gradient-4: linear-gradient(135deg, #ec4899, #8b5cf6);
+      --shadow-lg: 0 20px 60px rgba(0,0,0,0.4);
+      --shadow-glow: 0 0 30px rgba(59,130,246,0.15);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-xs: 6px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ========== ANIMATED BACKGROUND ========== */
+    .bg-mesh {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(59,130,246,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(6,182,212,0.05) 0%, transparent 50%);
+    }
+
+    /* ========== HEADER ========== */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,14,26,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+    }
+    .header-inner {
+      max-width: 1600px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 72px;
+    }
+    .logo-area {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .logo-icon {
+      width: 44px; height: 44px;
+      background: var(--gradient-1);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 900;
+      box-shadow: 0 0 20px rgba(59,130,246,0.3);
+    }
+    .logo-text h1 {
+      font-size: 18px; font-weight: 800; letter-spacing: -0.5px;
+      background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .logo-text span { font-size: 11px; color: var(--text-muted); font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
+
+    .live-badge {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3);
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; color: #ef4444;
+    }
+    .live-dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } }
+
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .last-updated { font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+
+    /* ========== NAV TABS ========== */
+    .nav-tabs {
+      display: flex; gap: 4px;
+      background: var(--bg-secondary); border-radius: 12px; padding: 4px;
+      border: 1px solid var(--border);
+    }
+    .nav-tab {
+      padding: 8px 20px; border-radius: 10px; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 600; font-family: inherit;
+      background: transparent; color: var(--text-secondary); transition: all 0.2s;
+    }
+    .nav-tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+    .nav-tab.active { background: var(--accent-blue); color: white; box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+
+    /* ========== MAIN CONTENT ========== */
+    .main { max-width: 1600px; margin: 0 auto; padding: 24px 32px; position: relative; z-index: 1; }
+
+    /* ========== STATS TICKER ========== */
+    .ticker {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 28px;
+    }
+    .ticker-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 18px 20px; position: relative; overflow: hidden; transition: all 0.3s;
+    }
+    .ticker-card:hover { border-color: var(--accent-blue); transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+    .ticker-card .label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .ticker-card .value { font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+    .ticker-card .sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+    .ticker-card::after {
+      content: ''; position: absolute; top: 0; right: 0; width: 60px; height: 60px;
+      border-radius: 0 0 0 60px; opacity: 0.1;
+    }
+    .ticker-card:nth-child(1)::after { background: var(--accent-blue); }
+    .ticker-card:nth-child(2)::after { background: var(--accent-purple); }
+    .ticker-card:nth-child(3)::after { background: var(--accent-green); }
+    .ticker-card:nth-child(4)::after { background: var(--accent-orange); }
+    .ticker-card:nth-child(5)::after { background: var(--accent-pink); }
+
+    .value-blue { color: var(--accent-blue); }
+    .value-purple { color: var(--accent-purple); }
+    .value-green { color: var(--accent-green); }
+    .value-orange { color: var(--accent-orange); }
+    .value-pink { color: var(--accent-pink); }
+
+    /* ========== DRAFT BOARD ========== */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 20px; font-weight: 800; letter-spacing: -0.5px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-title .icon { font-size: 24px; }
+    .section-badge {
+      font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .badge-nba { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
+    .badge-wnba { background: rgba(236,72,153,0.15); color: var(--accent-pink); }
+
+    .filters {
+      display: flex; gap: 8px;
+    }
+    .filter-btn {
+      padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border);
+      background: transparent; color: var(--text-secondary); font-size: 12px;
+      font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active { border-color: var(--accent-blue); color: var(--accent-blue); background: rgba(59,130,246,0.08); }
+
+    /* ========== PROSPECT TABLE ========== */
+    .draft-board {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; margin-bottom: 32px;
+    }
+    .draft-table { width: 100%; border-collapse: collapse; }
+    .draft-table th {
+      padding: 14px 16px; text-align: left; font-size: 11px; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px;
+      background: var(--bg-card); border-bottom: 1px solid var(--border);
+    }
+    .draft-table td {
+      padding: 14px 16px; border-bottom: 1px solid rgba(42,52,80,0.5);
+      font-size: 13px; vertical-align: middle;
+    }
+    .draft-table tr { transition: all 0.2s; }
+    .draft-table tbody tr:hover { background: var(--bg-card-hover); }
+
+    .pick-num {
+      font-size: 18px; font-weight: 900; font-family: 'JetBrains Mono', monospace;
+      min-width: 36px; display: inline-block; text-align: center;
+    }
+    .pick-1 { color: #ffd700; }
+    .pick-2 { color: #c0c0c0; }
+    .pick-3 { color: #cd7f32; }
+
+    .player-info { display: flex; align-items: center; gap: 12px; }
+    .player-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px; color: white; flex-shrink: 0;
+    }
+    .player-details { line-height: 1.4; }
+    .player-name { font-weight: 700; font-size: 14px; }
+    .player-meta { font-size: 11px; color: var(--text-secondary); }
+
+    .stat-cell { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; }
+    .stat-highlight { color: var(--accent-cyan); font-weight: 700; }
+
+    .trend-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+    }
+    .trend-up { background: rgba(16,185,129,0.12); color: var(--accent-green); }
+    .trend-down { background: rgba(239,68,68,0.12); color: var(--accent-red); }
+    .trend-steady { background: rgba(136,153,187,0.12); color: var(--text-secondary); }
+
+    .readiness-bar {
+      width: 80px; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden;
+    }
+    .readiness-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
+
+    .team-fit {
+      font-size: 12px; font-weight: 600;
+      padding: 4px 10px; border-radius: 6px;
+    }
+    .fit-high { background: rgba(16,185,129,0.12); color: var(--accent-green); }
+    .fit-mid { background: rgba(245,158,11,0.12); color: var(--accent-orange); }
+    .fit-low { background: rgba(239,68,68,0.12); color: var(--accent-red); }
+
+    /* ========== PLAYER DETAIL MODAL ========== */
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+      z-index: 1000; align-items: center; justify-content: center; padding: 40px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius);
+      max-width: 900px; width: 100%; max-height: 85vh; overflow-y: auto;
+      box-shadow: var(--shadow-lg); animation: modalIn 0.3s ease;
+    }
+    @keyframes modalIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .modal-header {
+      padding: 28px 32px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-header-left { display: flex; align-items: center; gap: 20px; }
+    .modal-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; font-weight: 900; color: white;
+    }
+    .modal-player-name { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+    .modal-player-sub { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+    .modal-close {
+      width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
+      background: transparent; color: var(--text-secondary); cursor: pointer;
+      font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+    }
+    .modal-close:hover { background: rgba(239,68,68,0.1); color: var(--accent-red); border-color: var(--accent-red); }
+
+    .modal-body { padding: 28px 32px; }
+
+    .stat-comparison {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px;
+    }
+    .stat-box {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px;
+    }
+    .stat-box h3 {
+      font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.8px; margin-bottom: 16px;
+    }
+    .stat-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid rgba(42,52,80,0.3);
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-label { font-size: 12px; color: var(--text-secondary); }
+    .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; }
+    .stat-up { color: var(--accent-green); }
+    .stat-down { color: var(--accent-red); }
+
+    .scouting-section { margin-bottom: 24px; }
+    .scouting-section h3 {
+      font-size: 14px; font-weight: 700; margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    .scouting-text { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+    .trait-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .trait {
+      padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    }
+    .trait-strength { background: rgba(16,185,129,0.12); color: var(--accent-green); }
+    .trait-weakness { background: rgba(239,68,68,0.12); color: var(--accent-red); }
+
+    .gauge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+    .gauge-item { text-align: center; }
+    .gauge-circle {
+      width: 80px; height: 80px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 8px; font-size: 22px; font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .gauge-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+
+    /* ========== BRACKET SECTION ========== */
+    .bracket-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px;
+    }
+    .region-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 20px; transition: all 0.3s;
+    }
+    .region-card:hover { border-color: var(--accent-purple); box-shadow: 0 0 20px rgba(139,92,246,0.1); }
+    .region-name {
+      font-size: 14px; font-weight: 800; margin-bottom: 14px;
+      background: var(--gradient-4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .region-team {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0; border-bottom: 1px solid rgba(42,52,80,0.3);
+      font-size: 13px;
+    }
+    .region-team:last-child { border-bottom: none; }
+    .seed-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+      background: rgba(59,130,246,0.15); color: var(--accent-blue);
+      font-family: 'JetBrains Mono', monospace; margin-right: 8px;
+    }
+    .region-score { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted); }
+    .eliminated { text-decoration: line-through; color: var(--text-muted); }
+
+    /* ========== GM INTELLIGENCE TAB ========== */
+    .gm-team-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 24px; margin-bottom: 20px; transition: all 0.3s;
+    }
+    .gm-team-card:hover { border-color: var(--accent-blue); }
+    .gm-team-header {
+      display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;
+    }
+    .gm-team-title { display: flex; align-items: center; gap: 12px; }
+    .gm-pick-badge {
+      width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 900; font-family: 'JetBrains Mono', monospace; color: white;
+    }
+    .gm-team-name { font-size: 18px; font-weight: 800; }
+    .gm-team-record { font-size: 12px; color: var(--text-muted); }
+    .gm-team-meta { display: flex; gap: 12px; flex-wrap: wrap; }
+    .gm-meta-chip {
+      padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;
+      background: rgba(59,130,246,0.1); color: var(--accent-blue); border: 1px solid rgba(59,130,246,0.2);
+    }
+    .gm-meta-chip.cap-good { background: rgba(16,185,129,0.1); color: var(--accent-green); border-color: rgba(16,185,129,0.2); }
+    .gm-meta-chip.cap-bad { background: rgba(239,68,68,0.1); color: var(--accent-red); border-color: rgba(239,68,68,0.2); }
+
+    .gm-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .gm-info-box {
+      background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px;
+    }
+    .gm-info-box h4 { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+    .gm-info-box p { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+    .gm-info-box .value { font-family: 'JetBrains Mono', monospace; color: var(--text-primary); font-weight: 600; }
+
+    .gm-roster-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 8px; }
+    .gm-roster-slot {
+      text-align: center; padding: 8px 4px; background: rgba(0,0,0,0.2); border-radius: 6px;
+      font-size: 11px;
+    }
+    .gm-roster-pos { font-size: 9px; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase; }
+    .gm-roster-name { font-size: 11px; color: var(--text-primary); margin-top: 2px; font-weight: 500; }
+    .gm-roster-empty { color: var(--accent-red); font-style: italic; }
+
+    .gm-rec-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .gm-rec-table th {
+      padding: 8px 10px; text-align: left; font-size: 10px; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border);
+    }
+    .gm-rec-table td { padding: 10px; font-size: 12px; border-bottom: 1px solid rgba(42,52,80,0.3); }
+    .rec-badge {
+      padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; white-space: nowrap;
+    }
+    .rec-strong { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+    .rec-good { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
+    .rec-need { background: rgba(245,158,11,0.15); color: var(--accent-orange); }
+    .rec-bpa { background: rgba(139,92,246,0.15); color: var(--accent-purple); }
+    .rec-reach { background: rgba(239,68,68,0.1); color: var(--accent-red); }
+
+    .gleague-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 600;
+      background: rgba(6,182,212,0.12); color: var(--accent-cyan);
+    }
+
+    .gm-strategy {
+      margin-top: 12px; padding: 12px 16px;
+      background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2);
+      border-radius: var(--radius-sm); font-size: 12px; color: var(--text-secondary); line-height: 1.6;
+    }
+    .gm-strategy strong { color: var(--accent-purple); }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1200px) {
+      .ticker { grid-template-columns: repeat(3, 1fr); }
+      .bracket-grid { grid-template-columns: repeat(2, 1fr); }
+      .gm-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .header { padding: 0 12px; }
+      .header-inner { flex-wrap: wrap; height: auto; padding: 12px 0; gap: 8px; }
+      .logo-area { width: 100%; }
+      .header-right { width: 100%; justify-content: space-between; }
+      .nav-tabs { width: 100%; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; flex-shrink: 0; }
+      .nav-tabs::-webkit-scrollbar { display: none; }
+      .nav-tab { padding: 8px 14px; font-size: 11px; white-space: nowrap; }
+      .main { padding: 12px; }
+      .ticker { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .ticker-card { padding: 12px; }
+      .ticker-card .value { font-size: 22px; }
+      .stat-comparison { grid-template-columns: 1fr; }
+      .bracket-grid { grid-template-columns: 1fr; }
+      .section-header { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .filters { flex-wrap: wrap; }
+      .draft-board { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .draft-table { font-size: 12px; min-width: 900px; }
+      .draft-table th, .draft-table td { padding: 10px 8px; }
+      .player-info { gap: 8px; }
+      .player-avatar { width: 32px; height: 32px; font-size: 11px; }
+      .player-name { font-size: 12px; }
+      .fit-table { grid-template-columns: 1fr; }
+      .gm-grid { grid-template-columns: 1fr; }
+      .gm-roster-grid { grid-template-columns: repeat(3, 1fr); }
+      .gm-team-header { flex-direction: column; }
+      .gm-rec-table { font-size: 11px; }
+      .modal { max-width: 95vw; max-height: 90vh; margin: 20px; }
+      .modal-header { padding: 16px; flex-wrap: wrap; gap: 12px; }
+      .modal-body { padding: 16px; }
+      .modal-avatar { width: 48px; height: 48px; font-size: 18px; }
+      .modal-player-name { font-size: 18px; }
+      .gauge-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .gauge-circle { width: 60px; height: 60px; font-size: 18px; }
+      .stock-ticker-bar { gap: 8px; padding: 8px 0; }
+    }
+    @media (max-width: 480px) {
+      .ticker { grid-template-columns: 1fr; }
+      .gm-roster-grid { grid-template-columns: repeat(2, 1fr); }
+      .gauge-grid { grid-template-columns: repeat(3, 1fr); }
+      .nav-tab { padding: 6px 10px; font-size: 10px; }
+      .logo-text h1 { font-size: 15px; }
+      .ticker-card .value { font-size: 18px; }
+    }
+
+    /* ========== ANIMATIONS ========== */
+    .fade-in { animation: fadeIn 0.5s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .slide-in { animation: slideIn 0.4s ease forwards; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+    /* ========== TAB CONTENT ========== */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ========== SCROLLBAR ========== */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* ========== COMPARISON BAR ========== */
+    .compare-bar {
+      display: flex; align-items: center; gap: 8px; margin: 4px 0;
+    }
+    .compare-bar-fill {
+      flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden;
+    }
+    .compare-bar-inner { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+    .compare-bar-label { font-size: 10px; color: var(--text-muted); min-width: 24px; text-align: right; font-family: 'JetBrains Mono', monospace; }
+
+    /* ========== TEAM FIT TABLE ========== */
+    .fit-table {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 32px;
+    }
+    .fit-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 20px; cursor: pointer; transition: all 0.3s;
+    }
+    .fit-card:hover { border-color: var(--accent-blue); transform: translateY(-2px); }
+    .fit-card-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+    }
+    .fit-pick { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 900; }
+    .fit-team { font-size: 14px; font-weight: 700; }
+    .fit-needs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+    .fit-need-tag {
+      font-size: 10px; padding: 2px 8px; border-radius: 12px;
+      background: rgba(139,92,246,0.12); color: var(--accent-purple);
+      font-weight: 600;
+    }
+    .fit-prospect {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 0; font-size: 12px;
+    }
+    .fit-score { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+    .fit-score-high { color: var(--accent-green); }
+    .fit-score-mid { color: var(--accent-orange); }
+    .fit-score-low { color: var(--accent-red); }
+
+    /* Real-time stock ticker */
+    .stock-ticker-bar {
+      display: flex; gap: 12px; overflow-x: auto; padding: 12px 0; margin-bottom: 20px;
+      scrollbar-width: none;
+    }
+    .stock-ticker-bar::-webkit-scrollbar { display: none; }
+    .stock-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border-radius: var(--radius-xs);
+      background: var(--bg-card); border: 1px solid var(--border);
+      white-space: nowrap; flex-shrink: 0; transition: all 0.3s;
+    }
+    .stock-item:hover { border-color: var(--accent-blue); }
+    .stock-name { font-size: 12px; font-weight: 700; }
+    .stock-rank { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; }
+    .stock-change { font-size: 11px; font-weight: 700; }
+    .stock-change.up { color: var(--accent-green); }
+    .stock-change.down { color: var(--accent-red); }
+    .stock-change.flat { color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+
+<!-- ========== HEADER ========== -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo-area">
+      <div class="logo-icon">MM</div>
+      <div class="logo-text">
+        <h1>Draft Command Center</h1>
+        <span>March Madness 2026 &bull; NBA &amp; WNBA</span>
+      </div>
+    </div>
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="nba">NBA Board</button>
+      <button class="nav-tab" data-tab="wnba">WNBA Board</button>
+      <button class="nav-tab" data-tab="gm-intel">GM Intelligence</button>
+      <button class="nav-tab" data-tab="bracket-men">Men's Bracket</button>
+      <button class="nav-tab" data-tab="bracket-women">Women's Bracket</button>
+      <button class="nav-tab" data-tab="team-fit">Team Fit</button>
+    </nav>
+    <div class="header-right">
+      <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+      <div class="last-updated" id="lastUpdated"></div>
+    </div>
+  </div>
+</header>
+
+<!-- ========== MAIN ========== -->
+<main class="main">
+
+  <!-- ===== STOCK TICKER ===== -->
+  <div class="stock-ticker-bar" id="stockTicker"></div>
+
+  <!-- ===== STATS OVERVIEW ===== -->
+  <div class="ticker" id="tickerCards"></div>
+
+  <!-- ===== NBA DRAFT BOARD ===== -->
+  <div class="tab-content active" id="tab-nba">
+    <div class="section-header">
+      <div class="section-title">
+        NBA Draft Big Board <span class="section-badge badge-nba">2026</span>
+      </div>
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="PG">PG</button>
+        <button class="filter-btn" data-filter="SG">SG</button>
+        <button class="filter-btn" data-filter="SF">SF</button>
+        <button class="filter-btn" data-filter="PF">PF</button>
+        <button class="filter-btn" data-filter="C">C</button>
+        <button class="filter-btn" data-filter="rising">Rising</button>
+      </div>
+    </div>
+    <div class="draft-board">
+      <table class="draft-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>PPG</th>
+            <th>RPG</th>
+            <th>APG</th>
+            <th>Tourney PPG</th>
+            <th>FG%</th>
+            <th>3P%</th>
+            <th>Trend</th>
+            <th>NBA Ready</th>
+            <th>Team Fit</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody id="nbaDraftBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== WNBA DRAFT BOARD ===== -->
+  <div class="tab-content" id="tab-wnba">
+    <div class="section-header">
+      <div class="section-title">
+        WNBA Draft Big Board <span class="section-badge badge-wnba">2026</span>
+      </div>
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="G">Guard</button>
+        <button class="filter-btn" data-filter="F">Forward</button>
+        <button class="filter-btn" data-filter="C">Center</button>
+        <button class="filter-btn" data-filter="rising">Rising</button>
+      </div>
+    </div>
+    <div class="draft-board">
+      <table class="draft-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>PPG</th>
+            <th>RPG</th>
+            <th>APG</th>
+            <th>Tourney PPG</th>
+            <th>FG%</th>
+            <th>3P%</th>
+            <th>Trend</th>
+            <th>Pro Ready</th>
+            <th>Team Fit</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody id="wnbaDraftBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== MEN'S BRACKET ===== -->
+  <div class="tab-content" id="tab-bracket-men">
+    <div class="section-header">
+      <div class="section-title">
+        Men's Tournament Bracket <span class="section-badge badge-nba">Sweet 16</span>
+      </div>
+    </div>
+    <div class="bracket-grid" id="mensBracket"></div>
+  </div>
+
+  <!-- ===== WOMEN'S BRACKET ===== -->
+  <div class="tab-content" id="tab-bracket-women">
+    <div class="section-header">
+      <div class="section-title">
+        Women's Tournament Bracket <span class="section-badge badge-wnba">Sweet 16</span>
+      </div>
+    </div>
+    <div class="bracket-grid" id="womensBracket"></div>
+  </div>
+
+  <!-- ===== GM INTELLIGENCE ===== -->
+  <div class="tab-content" id="tab-gm-intel">
+    <div class="section-header">
+      <div class="section-title">
+        GM Draft Intelligence <span class="section-badge badge-nba">NBA 2026</span>
+      </div>
+      <div class="filters">
+        <button class="filter-btn active" data-gmfilter="nba">NBA Teams</button>
+        <button class="filter-btn" data-gmfilter="wnba">WNBA Teams</button>
+      </div>
+    </div>
+    <div id="gmIntelNBA"></div>
+    <div id="gmIntelWNBA" style="display:none"></div>
+  </div>
+
+  <!-- ===== GM TEAM FIT ===== -->
+  <div class="tab-content" id="tab-team-fit">
+    <div class="section-header">
+      <div class="section-title">
+        GM Draft Room: Team-Prospect Fit Analysis <span class="section-badge badge-nba">NBA</span>
+      </div>
+    </div>
+    <div class="fit-table" id="teamFitGrid"></div>
+
+    <div class="section-header" style="margin-top:32px;">
+      <div class="section-title">
+        WNBA Expansion &amp; Draft Fit <span class="section-badge badge-wnba">WNBA</span>
+      </div>
+    </div>
+    <div class="fit-table" id="wnbaTeamFitGrid"></div>
+  </div>
+
+</main>
+
+<!-- ========== PLAYER MODAL ========== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="playerModal"></div>
+</div>
+
+<script>
+// =========================================================
+// DASHBOARD ENGINE
+// =========================================================
+
+const COLORS = [
+  'var(--gradient-1)', 'var(--gradient-2)', 'var(--gradient-3)', 'var(--gradient-4)',
+  'linear-gradient(135deg, #3b82f6, #06b6d4)',
+  'linear-gradient(135deg, #8b5cf6, #ec4899)',
+  'linear-gradient(135deg, #10b981, #f59e0b)',
+  'linear-gradient(135deg, #ef4444, #f59e0b)',
+  'linear-gradient(135deg, #06b6d4, #8b5cf6)',
+  'linear-gradient(135deg, #ec4899, #ef4444)',
+];
+
+function getColor(idx) { return COLORS[idx % COLORS.length]; }
+
+function initApp() {
+  renderTicker();
+  renderStockTicker();
+  renderDraftBoard('nba');
+  renderDraftBoard('wnba');
+  renderBracket('mens');
+  renderBracket('womens');
+  renderTeamFit();
+  renderGMIntel();
+  bindTabs();
+  bindFilters();
+  updateTimestamp();
+  startRealTimeUpdates();
+}
+
+// ===== STOCK TICKER =====
+function renderStockTicker() {
+  const all = [...TOURNAMENT_DATA.mens.prospects, ...TOURNAMENT_DATA.womens.prospects]
+    .sort((a,b) => Math.abs(b.stockChange) - Math.abs(a.stockChange))
+    .slice(0, 20);
+
+  document.getElementById('stockTicker').innerHTML = all.map(p => {
+    const dir = p.stockChange > 0 ? 'up' : p.stockChange < 0 ? 'down' : 'flat';
+    const arrow = p.stockChange > 0 ? '&#9650;' : p.stockChange < 0 ? '&#9660;' : '&#8226;';
+    const change = p.stockChange > 0 ? `+${p.stockChange}` : p.stockChange < 0 ? `${p.stockChange}` : '--';
+    return `<div class="stock-item">
+      <span class="stock-name">${p.name}</span>
+      <span class="stock-rank">#${p.currentProjection}</span>
+      <span class="stock-change ${dir}">${arrow} ${change}</span>
+    </div>`;
+  }).join('');
+}
+
+// ===== TICKER CARDS =====
+function renderTicker() {
+  const mensProspects = TOURNAMENT_DATA.mens.prospects;
+  const womensProspects = TOURNAMENT_DATA.womens.prospects;
+  const risers = [...mensProspects, ...womensProspects].filter(p => p.stockChange > 0);
+  const topScorer = [...mensProspects].sort((a,b) => b.tourneyStats.ppg - a.tourneyStats.ppg)[0];
+
+  const cards = [
+    { label: 'Active Prospects', value: mensProspects.length + womensProspects.length, sub: `${mensProspects.length} NBA + ${womensProspects.length} WNBA`, cls: 'value-blue' },
+    { label: '#1 Pick (NBA)', value: mensProspects.find(p => p.currentProjection === 1)?.name || '--', sub: mensProspects.find(p => p.currentProjection === 1)?.team || '', cls: 'value-purple', small: true },
+    { label: '#1 Pick (WNBA)', value: womensProspects.find(p => p.currentProjection === 1)?.name || '--', sub: womensProspects.find(p => p.currentProjection === 1)?.team || '', cls: 'value-pink', small: true },
+    { label: 'Stock Risers', value: risers.length, sub: `Biggest: +${Math.max(...risers.map(r => r.stockChange))} spots`, cls: 'value-green' },
+    { label: 'Tourney Top Scorer', value: topScorer ? `${topScorer.tourneyStats.ppg}` : '--', sub: topScorer ? topScorer.name : '', cls: 'value-orange' },
+  ];
+
+  document.getElementById('tickerCards').innerHTML = cards.map((c, i) => `
+    <div class="ticker-card fade-in" style="animation-delay:${i*80}ms">
+      <div class="label">${c.label}</div>
+      <div class="value ${c.cls}" ${c.small ? 'style="font-size:20px"' : ''}>${c.value}</div>
+      <div class="sub">${c.sub}</div>
+    </div>`).join('');
+}
+
+// ===== DRAFT BOARD =====
+function renderDraftBoard(type) {
+  const prospects = type === 'nba' ? TOURNAMENT_DATA.mens.prospects : TOURNAMENT_DATA.womens.prospects;
+  const teamNeeds = type === 'nba' ? TOURNAMENT_DATA.nbaTeamNeeds : TOURNAMENT_DATA.wnbaTeamNeeds;
+  const sorted = [...prospects].sort((a,b) => a.currentProjection - b.currentProjection);
+  const bodyId = type === 'nba' ? 'nbaDraftBody' : 'wnbaDraftBody';
+
+  document.getElementById(bodyId).innerHTML = sorted.map((p, i) => {
+    const score = computeDraftScore(p);
+    const teamMatch = teamNeeds[p.currentProjection - 1];
+    const fit = teamMatch ? computeFitScore(p, teamMatch) : 50;
+    const fitCls = fit >= 75 ? 'fit-high' : fit >= 60 ? 'fit-mid' : 'fit-low';
+    const trendCls = p.trend === 'rising' ? 'trend-up' : p.trend === 'falling' ? 'trend-down' : 'trend-steady';
+    const trendArrow = p.trend === 'rising' ? '&#9650;' : p.trend === 'falling' ? '&#9660;' : '&#8226;';
+    const trendLabel = p.stockChange > 0 ? `+${p.stockChange}` : p.stockChange < 0 ? `${p.stockChange}` : '--';
+    const pickCls = p.currentProjection <= 3 ? `pick-${p.currentProjection}` : '';
+    const readyColor = p.nbaReadiness >= 85 ? 'var(--accent-green)' : p.nbaReadiness >= 70 ? 'var(--accent-orange)' : 'var(--accent-red)';
+    const tPpg = p.tourneyStats.gamesPlayed > 0 ? p.tourneyStats.ppg.toFixed(1) : 'N/A';
+    const tPpgCls = p.tourneyStats.gamesPlayed > 0 && p.tourneyStats.ppg > p.seasonStats.ppg ? 'stat-highlight' : '';
+
+    return `<tr class="fade-in" style="animation-delay:${i*50}ms; cursor:pointer" onclick="openModal('${p.id}','${type}')">
+      <td><span class="pick-num ${pickCls}">${p.currentProjection}</span></td>
+      <td>
+        <div class="player-info">
+          <div class="player-avatar" style="background:${getColor(i)}">
+            ${PLAYER_HEADSHOTS[p.id] ? `<img src="${PLAYER_HEADSHOTS[p.id]}" alt="${p.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" onerror="this.style.display='none';this.parentElement.innerHTML='${p.name.split(' ').map(n=>n[0]).join('')}'">` : p.name.split(' ').map(n=>n[0]).join('')}
+          </div>
+          <div class="player-details">
+            <div class="player-name">${p.name}</div>
+            <div class="player-meta">${p.position} &bull; ${p.team} &bull; ${p.height} &bull; ${p.year}</div>
+          </div>
+        </div>
+      </td>
+      <td class="stat-cell">${p.seasonStats.ppg}</td>
+      <td class="stat-cell">${p.seasonStats.rpg}</td>
+      <td class="stat-cell">${p.seasonStats.apg}</td>
+      <td class="stat-cell ${tPpgCls}">${tPpg}</td>
+      <td class="stat-cell">${p.seasonStats.fgPct}%</td>
+      <td class="stat-cell">${p.seasonStats.threePct > 0 ? p.seasonStats.threePct + '%' : '--'}</td>
+      <td><span class="trend-badge ${trendCls}">${trendArrow} ${trendLabel}</span></td>
+      <td>
+        <div class="readiness-bar"><div class="readiness-fill" style="width:${p.nbaReadiness}%; background:${readyColor}"></div></div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;font-family:'JetBrains Mono',monospace">${p.nbaReadiness}/100</div>
+      </td>
+      <td>
+        <span class="team-fit ${fitCls}">${teamMatch ? teamMatch.team.split(' ').pop() : '--'} ${fit}%</span>
+      </td>
+      <td class="stat-cell" style="font-weight:800;color:var(--accent-cyan)">${score}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== BRACKET =====
+function renderBracket(gender) {
+  const bracket = gender === 'mens' ? TOURNAMENT_DATA.mens.bracket : TOURNAMENT_DATA.womens.bracket;
+  const container = gender === 'mens' ? 'mensBracket' : 'womensBracket';
+
+  document.getElementById(container).innerHTML = Object.values(bracket).map(region => `
+    <div class="region-card">
+      <div class="region-name">${region.name}</div>
+      ${region.sweet16.map(t => `
+        <div class="region-team ${t.eliminated ? 'eliminated' : ''}">
+          <div>
+            <span class="seed-badge">${t.seed}</span>
+            <span style="font-weight:600">${t.team}</span>
+            <span style="font-size:11px;color:var(--text-muted);margin-left:6px">${t.record || ''}</span>
+          </div>
+          <div class="region-score">
+            ${t.score1 ? `R1: ${t.score1}` : ''} ${t.score2 ? `| R2: ${t.score2}` : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+// ===== GM INTELLIGENCE =====
+function renderGMIntel() {
+  renderGMIntelSection(TOURNAMENT_DATA.nbaTeamNeeds, TOURNAMENT_DATA.mens.prospects, 'gmIntelNBA', 'nba');
+  renderGMIntelSection(TOURNAMENT_DATA.wnbaTeamNeeds, TOURNAMENT_DATA.womens.prospects, 'gmIntelWNBA', 'wnba');
+  bindGMFilters();
+}
+
+function renderGMIntelSection(teams, prospects, containerId, type) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = teams.map((team, idx) => {
+    const recs = getGMRecommendation(team, prospects).slice(0, 5);
+    const capCls = team.capSpace > 15 ? 'cap-good' : team.capSpace < 0 ? 'cap-bad' : '';
+    const isNBA = type === 'nba';
+
+    return `<div class="gm-team-card fade-in" style="animation-delay:${idx * 60}ms">
+      <div class="gm-team-header">
+        <div class="gm-team-title">
+          <div class="gm-pick-badge" style="background:${getColor(idx)}; overflow:hidden">
+            ${NBA_TEAM_LOGOS[team.logo] ? `<img src="${NBA_TEAM_LOGOS[team.logo]}" alt="${team.team}" style="width:36px;height:36px;object-fit:contain" onerror="this.style.display='none';this.parentElement.textContent='${team.pick}'">` : team.pick}
+          </div>
+          <div>
+            <div class="gm-team-name">${team.team}</div>
+            <div class="gm-team-record">${team.record || ''} ${team.conf ? '| ' + team.conf : ''}</div>
+          </div>
+        </div>
+        <div class="gm-team-meta">
+          ${team.needs.map(n => `<span class="gm-meta-chip">${n}</span>`).join('')}
+          ${isNBA && team.capSpace !== undefined ? `<span class="gm-meta-chip ${capCls}">Cap: ${team.capSpace > 0 ? '+' : ''}$${team.capSpace}M</span>` : ''}
+          ${isNBA && team.pace ? `<span class="gm-meta-chip">Pace: ${team.pace}</span>` : ''}
+        </div>
+      </div>
+
+      ${isNBA ? `<div class="gm-grid">
+        <div class="gm-info-box">
+          <h4>Current Roster</h4>
+          ${team.roster ? `<div class="gm-roster-grid">
+            ${Object.entries(team.roster).map(([pos, name]) => `
+              <div class="gm-roster-slot">
+                <div class="gm-roster-pos">${pos.toUpperCase()}</div>
+                <div class="gm-roster-name ${!name || name === '---' ? 'gm-roster-empty' : ''}">${name || '---'}</div>
+              </div>
+            `).join('')}
+          </div>` : ''}
+        </div>
+        <div class="gm-info-box">
+          <h4>Salary Cap Situation</h4>
+          <p>Total: <span class="value">$${team.totalSalary || '?'}M</span></p>
+          <p>Status: <span class="value">${team.capStatus || 'N/A'}</span></p>
+          <p>Off Rtg: <span class="value">${team.offRtg || '?'}</span> | Def Rtg: <span class="value">${team.defRtg || '?'}</span></p>
+          ${team.gLeague ? `<p style="margin-top:6px">G-League: <span class="gleague-badge">${team.gLeague}</span></p>` : ''}
+        </div>
+        <div class="gm-info-box">
+          <h4>Roster Gaps</h4>
+          ${team.rosterGaps ? team.rosterGaps.map(g => `<p style="margin-bottom:4px">- ${g}</p>`).join('') : '<p>N/A</p>'}
+        </div>
+      </div>` : ''}
+
+      <div class="gm-strategy">
+        <strong>GM Strategy:</strong> ${team.gmStrategy || 'Best player available.'}
+        ${team.tankNote ? `<br><strong>Intel:</strong> ${team.tankNote}` : ''}
+      </div>
+
+      <table class="gm-rec-table">
+        <thead>
+          <tr>
+            <th>Prospect</th>
+            <th>BPA Rank</th>
+            <th>Fit Score</th>
+            <th>Composite</th>
+            <th>Verdict</th>
+            <th>Path</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${recs.map(r => {
+            const recCls = r.recommendation === 'STRONG FIT' ? 'rec-strong' :
+                           r.recommendation === 'GOOD FIT' ? 'rec-good' :
+                           r.recommendation === 'NEED FIT' ? 'rec-need' :
+                           r.recommendation === 'BPA PICK' ? 'rec-bpa' : 'rec-reach';
+            return `<tr>
+              <td><strong>${r.prospect.name}</strong> <span style="color:var(--text-muted)">(${r.prospect.position})</span></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-weight:700">#${r.bpaRank}</td>
+              <td><span style="color:${r.fitScore >= 70 ? 'var(--accent-green)' : r.fitScore >= 50 ? 'var(--accent-orange)' : 'var(--accent-red)'};font-weight:700">${r.fitScore}%</span></td>
+              <td style="font-family:'JetBrains Mono',monospace;font-weight:800;color:var(--accent-cyan)">${r.composite}</td>
+              <td><span class="rec-badge ${recCls}">${r.recommendation}</span></td>
+              <td><span class="gleague-badge">${r.gLeaguePath}</span></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  }).join('');
+}
+
+function bindGMFilters() {
+  document.querySelectorAll('[data-gmfilter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-gmfilter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.gmfilter;
+      document.getElementById('gmIntelNBA').style.display = filter === 'nba' ? 'block' : 'none';
+      document.getElementById('gmIntelWNBA').style.display = filter === 'wnba' ? 'block' : 'none';
+    });
+  });
+}
+
+// ===== TEAM FIT =====
+function renderTeamFit() {
+  renderFitGrid('nba', TOURNAMENT_DATA.nbaTeamNeeds, TOURNAMENT_DATA.mens.prospects, 'teamFitGrid');
+  renderFitGrid('wnba', TOURNAMENT_DATA.wnbaTeamNeeds, TOURNAMENT_DATA.womens.prospects, 'wnbaTeamFitGrid');
+}
+
+function renderFitGrid(type, teams, prospects, containerId) {
+  document.getElementById(containerId).innerHTML = teams.map(team => {
+    const fits = prospects.map(p => ({
+      name: p.name,
+      pos: p.position,
+      fit: computeFitScore(p, team),
+      projection: p.currentProjection
+    })).sort((a,b) => b.fit - a.fit).slice(0, 3);
+
+    return `<div class="fit-card">
+      <div class="fit-card-header">
+        <div>
+          <div class="fit-team">${team.team}</div>
+        </div>
+        <div class="fit-pick" style="color:var(--accent-purple);display:flex;align-items:center;gap:8px">
+          ${NBA_TEAM_LOGOS[team.logo] ? `<img src="${NBA_TEAM_LOGOS[team.logo]}" alt="" style="width:28px;height:28px;object-fit:contain" onerror="this.style.display='none'">` : ''}
+          #${team.pick}
+        </div>
+      </div>
+      <div class="fit-needs">${team.needs.map(n => `<span class="fit-need-tag">${n}</span>`).join('')}</div>
+      ${fits.map(f => {
+        const cls = f.fit >= 75 ? 'fit-score-high' : f.fit >= 60 ? 'fit-score-mid' : 'fit-score-low';
+        return `<div class="fit-prospect">
+          <span>${f.name} <span style="color:var(--text-muted)">(${f.pos})</span></span>
+          <span class="fit-score ${cls}">${f.fit}%</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+// ===== PLAYER MODAL =====
+function openModal(id, type) {
+  const prospects = type === 'nba' ? TOURNAMENT_DATA.mens.prospects : TOURNAMENT_DATA.womens.prospects;
+  const p = prospects.find(pr => pr.id === id);
+  if (!p) return;
+
+  const s = p.seasonStats;
+  const t = p.tourneyStats;
+  const teams = type === 'nba' ? TOURNAMENT_DATA.nbaTeamNeeds : TOURNAMENT_DATA.wnbaTeamNeeds;
+  const teamMatch = teams[p.currentProjection - 1];
+  const score = computeDraftScore(p);
+
+  const readyColor = val => val >= 85 ? 'var(--accent-green)' : val >= 70 ? 'var(--accent-orange)' : 'var(--accent-red)';
+  const diffColor = (a, b) => a > b ? 'stat-up' : a < b ? 'stat-down' : '';
+
+  document.getElementById('playerModal').innerHTML = `
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-avatar" style="background:${getColor(p.currentProjection)}">
+          ${PLAYER_HEADSHOTS[p.id] ? `<img src="${PLAYER_HEADSHOTS[p.id]}" alt="${p.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" onerror="this.style.display='none';this.parentElement.textContent='${p.name.split(' ').map(n=>n[0]).join('')}'">` : p.name.split(' ').map(n=>n[0]).join('')}
+        </div>
+        <div>
+          <div class="modal-player-name">${p.name}</div>
+          <div class="modal-player-sub">${p.position} &bull; ${p.team} &bull; ${p.height} / ${p.weight}lbs &bull; ${p.year} &bull; Age ${p.age} &bull; ${p.nationality}</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="stat-comparison">
+        <div class="stat-box">
+          <h3>Season Averages</h3>
+          ${statRow('Points', s.ppg)}
+          ${statRow('Rebounds', s.rpg)}
+          ${statRow('Assists', s.apg)}
+          ${statRow('Steals', s.spg)}
+          ${statRow('Blocks', s.bpg)}
+          ${statRow('FG%', s.fgPct + '%')}
+          ${statRow('3P%', s.threePct > 0 ? s.threePct + '%' : 'N/A')}
+          ${statRow('FT%', s.ftPct + '%')}
+          ${statRow('PER', s.per)}
+          ${statRow('TS%', s.ts + '%')}
+        </div>
+        <div class="stat-box">
+          <h3>Tournament Stats ${t.gamesPlayed > 0 ? `(${t.gamesPlayed} games)` : '(Not played)'}</h3>
+          ${statRowCompare('Points', t.ppg, s.ppg, t.gamesPlayed)}
+          ${statRowCompare('Rebounds', t.rpg, s.rpg, t.gamesPlayed)}
+          ${statRowCompare('Assists', t.apg, s.apg, t.gamesPlayed)}
+          ${statRowCompare('Steals', t.spg, s.spg, t.gamesPlayed)}
+          ${statRowCompare('Blocks', t.bpg, s.bpg, t.gamesPlayed)}
+          ${statRowCompare('FG%', t.fgPct, s.fgPct, t.gamesPlayed, '%')}
+          ${statRowCompare('3P%', t.threePct, s.threePct, t.gamesPlayed, '%')}
+          ${statRowCompare('FT%', t.ftPct, s.ftPct, t.gamesPlayed, '%')}
+        </div>
+      </div>
+
+      <div class="scouting-section">
+        <h3>Scouting Report</h3>
+        <p class="scouting-text">${p.scoutingReport}</p>
+        <p class="scouting-text" style="margin-top:8px"><strong>Comparison:</strong> ${p.comparison}</p>
+      </div>
+
+      <div class="scouting-section">
+        <h3>Strengths</h3>
+        <div class="trait-list">${p.strengths.map(s => `<span class="trait trait-strength">${s}</span>`).join('')}</div>
+      </div>
+
+      <div class="scouting-section">
+        <h3>Weaknesses</h3>
+        <div class="trait-list">${p.weaknesses.map(w => `<span class="trait trait-weakness">${w}</span>`).join('')}</div>
+      </div>
+
+      <div class="gauge-grid">
+        <div class="gauge-item">
+          <div class="gauge-circle" style="border: 4px solid ${readyColor(p.nbaReadiness)}; color: ${readyColor(p.nbaReadiness)}">${p.nbaReadiness}</div>
+          <div class="gauge-label">Pro Readiness</div>
+        </div>
+        <div class="gauge-item">
+          <div class="gauge-circle" style="border: 4px solid var(--accent-cyan); color: var(--accent-cyan)">${p.ceiling}</div>
+          <div class="gauge-label">Ceiling</div>
+        </div>
+        <div class="gauge-item">
+          <div class="gauge-circle" style="border: 4px solid var(--accent-orange); color: var(--accent-orange)">${p.floor}</div>
+          <div class="gauge-label">Floor</div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;padding:16px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase">Projected Pick</div>
+            <div style="font-size:28px;font-weight:900;color:var(--accent-blue);font-family:'JetBrains Mono',monospace">#${p.currentProjection}</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase">Draft Score</div>
+            <div style="font-size:28px;font-weight:900;color:var(--accent-cyan);font-family:'JetBrains Mono',monospace">${score}</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase">Best Fit</div>
+            <div style="font-size:18px;font-weight:800;color:var(--accent-purple)">${teamMatch ? teamMatch.team : '--'}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function statRow(label, value) {
+  return `<div class="stat-row"><span class="stat-label">${label}</span><span class="stat-value">${value}</span></div>`;
+}
+
+function statRowCompare(label, tourney, season, gp, suffix = '') {
+  if (gp === 0) return `<div class="stat-row"><span class="stat-label">${label}</span><span class="stat-value" style="color:var(--text-muted)">--</span></div>`;
+  const diff = tourney - season;
+  const cls = diff > 0 ? 'stat-up' : diff < 0 ? 'stat-down' : '';
+  const arrow = diff > 0 ? '+' : '';
+  return `<div class="stat-row">
+    <span class="stat-label">${label}</span>
+    <span class="stat-value">
+      ${typeof tourney === 'number' ? tourney.toFixed(1) : tourney}${suffix}
+      <span class="${cls}" style="font-size:11px;margin-left:6px">(${arrow}${diff.toFixed(1)})</span>
+    </span>
+  </div>`;
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ===== TABS =====
+function bindTabs() {
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+    });
+  });
+}
+
+// ===== FILTERS =====
+function bindFilters() {
+  document.querySelectorAll('.filters').forEach(filterGroup => {
+    filterGroup.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterGroup.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilter(btn.dataset.filter, filterGroup);
+      });
+    });
+  });
+}
+
+function applyFilter(filter, group) {
+  const table = group.closest('.tab-content').querySelector('.draft-table tbody');
+  if (!table) return;
+  const rows = table.querySelectorAll('tr');
+  rows.forEach(row => {
+    const meta = row.querySelector('.player-meta')?.textContent || '';
+    const trend = row.querySelector('.trend-badge')?.classList.contains('trend-up');
+    if (filter === 'all') { row.style.display = ''; }
+    else if (filter === 'rising') { row.style.display = trend ? '' : 'none'; }
+    else { row.style.display = meta.includes(filter) ? '' : 'none'; }
+  });
+}
+
+// ===== TIMESTAMP =====
+function updateTimestamp() {
+  const now = new Date();
+  document.getElementById('lastUpdated').textContent = `Updated: ${now.toLocaleString('en-US', {
+    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'
+  })}`;
+}
+
+// ===== REAL-TIME SIMULATION =====
+function startRealTimeUpdates() {
+  setInterval(() => {
+    // Simulate minor stat fluctuations for "live" feel
+    const allProspects = [...TOURNAMENT_DATA.mens.prospects, ...TOURNAMENT_DATA.womens.prospects];
+    const randomProspect = allProspects[Math.floor(Math.random() * allProspects.length)];
+    const variation = (Math.random() - 0.5) * 0.2;
+    randomProspect.nbaReadiness = Math.max(50, Math.min(99, randomProspect.nbaReadiness + variation));
+
+    updateTimestamp();
+
+    // Re-render stock ticker with subtle animation
+    renderStockTicker();
+  }, 8000);
+
+  // Periodic full refresh
+  setInterval(() => {
+    renderDraftBoard('nba');
+    renderDraftBoard('wnba');
+    renderTicker();
+  }, 30000);
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', initApp);
+</script>
+
+</body>
+</html>

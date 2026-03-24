@@ -1,0 +1,1453 @@
+// =====================================================
+// MARCH MADNESS 2026 - COMPLETE DATA LAYER
+// Real tournament results, player stats & draft projections
+// =====================================================
+
+// ===== HEADSHOT & LOGO MAPPINGS =====
+const PLAYER_HEADSHOTS = {
+  m1: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/5041935.png",
+  m2: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/5142718.png",
+  m3: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/5041955.png",
+  m4: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/5142620.png",
+  m5: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/5149077.png",
+  m6: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/5254165.png",
+  m7: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/4848625.png",
+  m8: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/4873090.png",
+  m9: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/5106270.png",
+  m10: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/5095151.png",
+  m11: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/5101845.png",
+  m12: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/5107968.png",
+  m13: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/4848625.png",
+  m14: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/4711255.png",
+  m15: "https://a.espncdn.com/i/headshots/mens-college-basketball/players/full/5177211.png",
+  w1: "https://a.espncdn.com/i/headshots/womens-college-basketball/players/full/4433790.png",
+  w2: "https://a.espncdn.com/i/headshots/womens-college-basketball/players/full/5105737.png",
+  w3: "https://a.espncdn.com/i/headshots/womens-college-basketball/players/full/4433791.png",
+  w4: "https://a.espncdn.com/i/headshots/womens-college-basketball/players/full/4565505.png",
+  w5: "https://a.espncdn.com/i/headshots/womens-college-basketball/players/full/5175792.png",
+  w6: "https://a.espncdn.com/i/headshots/womens-college-basketball/players/full/5239592.png",
+  w7: "https://a.espncdn.com/i/headshots/womens-college-basketball/players/full/4583144.png",
+  w8: "https://a.espncdn.com/i/headshots/womens-college-basketball/players/full/4609797.png",
+  w9: "https://a.espncdn.com/i/headshots/womens-college-basketball/players/full/4698736.png",
+  w10: "https://a.espncdn.com/i/headshots/womens-college-basketball/players/full/4433797.png"
+};
+
+const NBA_TEAM_LOGOS = {
+  IND: "https://cdn.nba.com/logos/nba/1610612754/primary/L/logo.svg",
+  WAS: "https://cdn.nba.com/logos/nba/1610612764/primary/L/logo.svg",
+  BKN: "https://cdn.nba.com/logos/nba/1610612751/primary/L/logo.svg",
+  SAC: "https://cdn.nba.com/logos/nba/1610612758/primary/L/logo.svg",
+  UTA: "https://cdn.nba.com/logos/nba/1610612762/primary/L/logo.svg",
+  DAL: "https://cdn.nba.com/logos/nba/1610612742/primary/L/logo.svg",
+  MEM: "https://cdn.nba.com/logos/nba/1610612763/primary/L/logo.svg",
+  MIL: "https://cdn.nba.com/logos/nba/1610612749/primary/L/logo.svg",
+  CHI: "https://cdn.nba.com/logos/nba/1610612741/primary/L/logo.svg",
+  CHA: "https://cdn.nba.com/logos/nba/1610612766/primary/L/logo.svg",
+  SAS: "https://cdn.nba.com/logos/nba/1610612759/primary/L/logo.svg",
+  ATL: "https://cdn.nba.com/logos/nba/1610612737/primary/L/logo.svg",
+  POR: "https://cdn.nba.com/logos/nba/1610612757/primary/L/logo.svg",
+  DET: "https://cdn.nba.com/logos/nba/1610612765/primary/L/logo.svg",
+  NOP: "https://cdn.nba.com/logos/nba/1610612740/primary/L/logo.svg",
+  MIA: "https://cdn.nba.com/logos/nba/1610612748/primary/L/logo.svg",
+  GSW: "https://cdn.nba.com/logos/nba/1610612744/primary/L/logo.svg",
+  LAL: "https://cdn.nba.com/logos/nba/1610612747/primary/L/logo.svg",
+  HOU: "https://cdn.nba.com/logos/nba/1610612745/primary/L/logo.svg",
+  ORL: "https://cdn.nba.com/logos/nba/1610612753/primary/L/logo.svg",
+  PHX: "https://cdn.nba.com/logos/nba/1610612756/primary/L/logo.svg",
+  MIN: "https://cdn.nba.com/logos/nba/1610612750/primary/L/logo.svg",
+  CLE: "https://cdn.nba.com/logos/nba/1610612739/primary/L/logo.svg",
+  NYK: "https://cdn.nba.com/logos/nba/1610612752/primary/L/logo.svg",
+  DEN: "https://cdn.nba.com/logos/nba/1610612743/primary/L/logo.svg",
+  PHI: "https://cdn.nba.com/logos/nba/1610612755/primary/L/logo.svg",
+  TOR: "https://cdn.nba.com/logos/nba/1610612761/primary/L/logo.svg",
+  OKC: "https://cdn.nba.com/logos/nba/1610612760/primary/L/logo.svg",
+  BOS: "https://cdn.nba.com/logos/nba/1610612738/primary/L/logo.svg",
+  LAC: "https://cdn.nba.com/logos/nba/1610612746/primary/L/logo.svg"
+};
+
+const TOURNAMENT_DATA = {
+  season: "2025-26",
+  lastUpdated: new Date().toISOString(),
+
+  // ===== MEN'S TOURNAMENT =====
+  mens: {
+    bracket: {
+      south: {
+        name: "South Region",
+        sweet16: [
+          { seed: 1, team: "Duke", record: "33-2", score1: 71, opp1: "Siena", score2: 81, opp2: "TCU" },
+          { seed: 4, team: "Nebraska", record: "27-8", score1: 76, opp1: "Troy", score2: 74, opp2: "Vanderbilt" },
+          { seed: 3, team: "Michigan State", record: "28-7", score1: 92, opp1: "North Dakota St", score2: 77, opp2: "Louisville" },
+          { seed: 2, team: "Alabama", record: "27-7", score1: 88, opp1: "Hofstra", score2: 91, opp2: "Texas Tech" }
+        ]
+      },
+      west: {
+        name: "West Region",
+        sweet16: [
+          { seed: 1, team: "Arizona", record: "30-4", score1: 89, opp1: "Colgate", score2: 78, opp2: "San Diego St" },
+          { seed: 4, team: "Arkansas", record: "25-9", score1: 97, opp1: "Hawaii", score2: 94, opp2: "High Point" },
+          { seed: 2, team: "Houston", record: "30-4", score1: 78, opp1: "Idaho", score2: 88, opp2: "Texas A&M" },
+          { seed: 3, team: "Illinois", record: "27-7", score1: 105, opp1: "Penn", score2: 76, opp2: "VCU" }
+        ]
+      },
+      east: {
+        name: "East Region",
+        sweet16: [
+          { seed: 1, team: "Michigan", record: "31-3", score1: 101, opp1: "Howard", score2: 95, opp2: "Saint Louis" },
+          { seed: 6, team: "Tennessee", record: "24-10", score1: 85, opp1: "Miami OH", score2: 79, opp2: "Virginia" },
+          { seed: 2, team: "Purdue", record: "29-5", score1: 82, opp1: "UC Irvine", score2: 75, opp2: "Xavier" },
+          { seed: 11, team: "Texas", record: "22-14", score1: 79, opp1: "BYU", score2: 74, opp2: "Gonzaga" }
+        ]
+      },
+      midwest: {
+        name: "Midwest Region",
+        sweet16: [
+          { seed: 1, team: "Florida", record: "32-2", eliminated: true },
+          { seed: 9, team: "Iowa", record: "23-12", score1: 67, opp1: "Clemson", score2: 73, opp2: "Florida" },
+          { seed: 4, team: "Nebraska", record: "27-8" },
+          { seed: 2, team: "Kentucky", record: "26-8", score1: 88, opp1: "Santa Clara", score2: 75, opp2: "Pittsburgh" }
+        ]
+      }
+    },
+
+    // ===== MEN'S NBA DRAFT PROSPECTS =====
+    prospects: [
+      {
+        id: "m1",
+        name: "Cameron Boozer",
+        team: "Duke",
+        position: "PF/C",
+        height: "6'10\"",
+        weight: 235,
+        age: 19,
+        year: "Freshman",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 21.4, rpg: 10.8, apg: 3.6, spg: 0.9, bpg: 1.4, fgPct: 58.2, threePct: 34.1, ftPct: 82.5, mpg: 33.2, to: 2.1, per: 32.8, ts: 64.2 },
+        tourneyStats: { ppg: 20.5, rpg: 12.0, apg: 3.5, spg: 1.0, bpg: 1.5, fgPct: 60.1, threePct: 33.3, ftPct: 94.7, gamesPlayed: 2 },
+        preTourneyRank: 2,
+        currentProjection: 1,
+        trend: "rising",
+        stockChange: +1,
+        strengths: ["Elite production", "Motor", "Passing big", "FT shooting", "IQ"],
+        weaknesses: ["Athletic explosiveness", "Finishing over length"],
+        comparison: "Chris Bosh / Pau Gasol",
+        scoutingReport: "Highest KenPom rating ever. Likely Naismith POY. Dominant on both ends with rare passing IQ for a big.",
+        nbaReadiness: 92,
+        ceiling: 96,
+        floor: 78
+      },
+      {
+        id: "m2",
+        name: "AJ Dybantsa",
+        team: "BYU",
+        position: "SF/SG",
+        height: "6'9\"",
+        weight: 210,
+        age: 18,
+        year: "Freshman",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 18.7, rpg: 6.1, apg: 3.2, spg: 1.3, bpg: 0.8, fgPct: 44.8, threePct: 32.6, ftPct: 78.4, mpg: 34.1, to: 2.8, per: 24.6, ts: 57.1 },
+        tourneyStats: { ppg: 24.0, rpg: 7.0, apg: 3.0, spg: 2.0, bpg: 1.0, fgPct: 42.0, threePct: 30.0, ftPct: 80.0, gamesPlayed: 2 },
+        preTourneyRank: 1,
+        currentProjection: 2,
+        trend: "falling",
+        stockChange: -1,
+        strengths: ["Versatile scorer", "Length", "Shot creation", "Defensive upside"],
+        weaknesses: ["Shot selection", "Efficiency", "Team success"],
+        comparison: "Paul George / Brandon Ingram",
+        scoutingReport: "Scored 35 in elimination game vs Texas. Early exit hurts, but raw talent is undeniable. Fewest holes among top picks.",
+        nbaReadiness: 78,
+        ceiling: 97,
+        floor: 68
+      },
+      {
+        id: "m3",
+        name: "Darryn Peterson",
+        team: "Kansas",
+        position: "SG/PG",
+        height: "6'5\"",
+        weight: 195,
+        age: 19,
+        year: "Freshman",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 17.8, rpg: 4.5, apg: 5.1, spg: 1.4, bpg: 0.3, fgPct: 46.2, threePct: 36.8, ftPct: 81.2, mpg: 33.8, to: 2.5, per: 23.9, ts: 58.7 },
+        tourneyStats: { ppg: 15.0, rpg: 4.0, apg: 4.5, spg: 1.0, bpg: 0.5, fgPct: 38.0, threePct: 28.6, ftPct: 75.0, gamesPlayed: 1 },
+        preTourneyRank: 3,
+        currentProjection: 3,
+        trend: "falling",
+        stockChange: 0,
+        strengths: ["Playmaking", "Two-way guard", "Off-ball movement", "Basketball IQ"],
+        weaknesses: ["Tourney performance", "Consistency under pressure"],
+        comparison: "Jalen Brunson / Devin Booker",
+        scoutingReport: "Top pick candidate all year. Early exit hurts narrative but skill set translates directly to NBA.",
+        nbaReadiness: 82,
+        ceiling: 93,
+        floor: 72
+      },
+      {
+        id: "m4",
+        name: "Darius Acuff Jr.",
+        team: "Arkansas",
+        position: "PG",
+        height: "6'2\"",
+        weight: 185,
+        age: 19,
+        year: "Freshman",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 16.9, rpg: 3.2, apg: 6.8, spg: 1.6, bpg: 0.2, fgPct: 45.1, threePct: 37.4, ftPct: 84.6, mpg: 34.5, to: 2.3, per: 22.7, ts: 59.3 },
+        tourneyStats: { ppg: 26.0, rpg: 3.5, apg: 5.5, spg: 2.0, bpg: 0.0, fgPct: 52.0, threePct: 44.4, ftPct: 90.0, gamesPlayed: 2 },
+        preTourneyRank: 7,
+        currentProjection: 4,
+        trend: "rising",
+        stockChange: +3,
+        strengths: ["Clutch scoring", "Court vision", "Leadership", "Deep range"],
+        weaknesses: ["Size", "Finishing at rim vs length"],
+        comparison: "Damian Lillard / Trae Young",
+        scoutingReport: "36 points vs High Point in a clutch second-round win. Took over when it mattered most. Massive stock riser.",
+        nbaReadiness: 80,
+        ceiling: 91,
+        floor: 70
+      },
+      {
+        id: "m5",
+        name: "Kingston Flemings",
+        team: "Houston",
+        position: "PG",
+        height: "6'3\"",
+        weight: 190,
+        age: 19,
+        year: "Freshman",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 15.2, rpg: 3.8, apg: 6.1, spg: 1.8, bpg: 0.3, fgPct: 47.3, threePct: 38.2, ftPct: 79.8, mpg: 32.1, to: 2.0, per: 23.1, ts: 60.1 },
+        tourneyStats: { ppg: 18.5, rpg: 4.0, apg: 7.0, spg: 2.5, bpg: 0.5, fgPct: 50.0, threePct: 40.0, ftPct: 85.0, gamesPlayed: 2 },
+        preTourneyRank: 5,
+        currentProjection: 5,
+        trend: "rising",
+        stockChange: 0,
+        strengths: ["Speed", "Creativity", "Vision", "Poise under pressure", "Defense"],
+        weaknesses: ["Size for position", "Pull-up three"],
+        comparison: "Chris Paul / Tyrese Haliburton",
+        scoutingReport: "Poise and dynamism on full display in March. The speed, creativity and vision is everything you want in a PG.",
+        nbaReadiness: 85,
+        ceiling: 90,
+        floor: 74
+      },
+      {
+        id: "m6",
+        name: "Keaton Wagler",
+        team: "Illinois",
+        position: "SG/SF",
+        height: "6'6\"",
+        weight: 200,
+        age: 19,
+        year: "Freshman",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 14.8, rpg: 4.2, apg: 4.4, spg: 1.1, bpg: 0.5, fgPct: 47.8, threePct: 40.2, ftPct: 86.3, mpg: 31.6, to: 1.8, per: 21.5, ts: 61.8 },
+        tourneyStats: { ppg: 19.0, rpg: 5.0, apg: 5.5, spg: 1.5, bpg: 0.5, fgPct: 52.0, threePct: 44.4, ftPct: 88.0, gamesPlayed: 2 },
+        preTourneyRank: 12,
+        currentProjection: 6,
+        trend: "rising",
+        stockChange: +6,
+        strengths: ["3-point shooting", "Playmaking", "Versatility", "High IQ"],
+        weaknesses: ["Athleticism", "Creating own shot at rim"],
+        comparison: "Khris Middleton / Malcolm Brogdon",
+        scoutingReport: "Not a highly-billed prospect entering the season, but played his way into top-10 pick range with 40.2% from three and elite playmaking.",
+        nbaReadiness: 79,
+        ceiling: 87,
+        floor: 72
+      },
+      {
+        id: "m7",
+        name: "Dailyn Swain",
+        team: "Texas",
+        position: "SF/SG",
+        height: "6'8\"",
+        weight: 205,
+        age: 20,
+        year: "Sophomore",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 14.1, rpg: 5.8, apg: 4.2, spg: 1.3, bpg: 0.7, fgPct: 49.2, threePct: 36.5, ftPct: 77.1, mpg: 33.4, to: 1.9, per: 22.0, ts: 59.5 },
+        tourneyStats: { ppg: 12.6, rpg: 6.3, apg: 5.3, spg: 1.3, bpg: 0.7, fgPct: 48.0, threePct: 35.0, ftPct: 80.0, gamesPlayed: 3 },
+        preTourneyRank: 15,
+        currentProjection: 8,
+        trend: "rising",
+        stockChange: +7,
+        strengths: ["Switchable defense", "Scoring efficiency", "Versatility", "6'8\" wing"],
+        weaknesses: ["Burst/first step", "Volume scoring"],
+        comparison: "Mikal Bridges / OG Anunoby",
+        scoutingReport: "Led Texas from First Four past Dybantsa's BYU and Gonzaga. Elite analytics profile with switchable plus-defense.",
+        nbaReadiness: 81,
+        ceiling: 88,
+        floor: 73
+      },
+      {
+        id: "m8",
+        name: "Labaron Philon Jr.",
+        team: "Alabama",
+        position: "PG/SG",
+        height: "6'4\"",
+        weight: 195,
+        age: 20,
+        year: "Sophomore",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 15.6, rpg: 4.8, apg: 5.3, spg: 1.5, bpg: 0.4, fgPct: 44.5, threePct: 34.8, ftPct: 80.2, mpg: 33.9, to: 2.4, per: 22.3, ts: 57.8 },
+        tourneyStats: { ppg: 15.5, rpg: 5.5, apg: 9.0, spg: 2.0, bpg: 0.5, fgPct: 36.0, threePct: 25.0, ftPct: 85.0, gamesPlayed: 2 },
+        preTourneyRank: 9,
+        currentProjection: 9,
+        trend: "steady",
+        stockChange: 0,
+        strengths: ["Playmaking vision", "Athleticism", "Defensive versatility", "Passing"],
+        weaknesses: ["Shot consistency", "Decision making"],
+        comparison: "Russell Westbrook / De'Aaron Fox",
+        scoutingReport: "29 pts, 8 reb, 7 ast, 3 stl in R1. Then a career-high 12 assists in R2 despite shooting struggles. Complete guard.",
+        nbaReadiness: 77,
+        ceiling: 91,
+        floor: 65
+      },
+      {
+        id: "m9",
+        name: "Otega Oweh",
+        team: "Kentucky",
+        position: "SG/SF",
+        height: "6'6\"",
+        weight: 200,
+        age: 19,
+        year: "Freshman",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 16.2, rpg: 5.4, apg: 3.8, spg: 1.2, bpg: 0.6, fgPct: 46.8, threePct: 37.1, ftPct: 82.0, mpg: 33.0, to: 2.0, per: 23.0, ts: 59.0 },
+        tourneyStats: { ppg: 28.0, rpg: 7.0, apg: 6.0, spg: 1.5, bpg: 1.0, fgPct: 50.0, threePct: 40.0, ftPct: 85.0, gamesPlayed: 2 },
+        preTourneyRank: 10,
+        currentProjection: 7,
+        trend: "rising",
+        stockChange: +3,
+        strengths: ["Clutch gene", "Complete stat sheet", "Scoring arsenal", "Size"],
+        weaknesses: ["Consistency game-to-game", "Defensive effort"],
+        comparison: "Jaylen Brown / Andrew Wiggins",
+        scoutingReport: "Buzzer-beater half-court heave saved UK. First player since Larry Bird with 35/8/7 in NCAA tourney game.",
+        nbaReadiness: 80,
+        ceiling: 92,
+        floor: 68
+      },
+      {
+        id: "m10",
+        name: "Caleb Wilson",
+        team: "North Carolina",
+        position: "SF/PF",
+        height: "6'8\"",
+        weight: 215,
+        age: 19,
+        year: "Freshman",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 17.3, rpg: 7.1, apg: 2.8, spg: 1.0, bpg: 1.1, fgPct: 50.2, threePct: 35.5, ftPct: 79.8, mpg: 32.5, to: 1.7, per: 25.1, ts: 60.5 },
+        tourneyStats: { ppg: 0, rpg: 0, apg: 0, spg: 0, bpg: 0, fgPct: 0, threePct: 0, ftPct: 0, gamesPlayed: 0 },
+        preTourneyRank: 4,
+        currentProjection: 10,
+        trend: "falling",
+        stockChange: -6,
+        strengths: ["Two-way player", "Athleticism", "Motor", "Versatile scoring"],
+        weaknesses: ["Thumb injury (season-ending)", "Durability concerns"],
+        comparison: "Scottie Barnes / Kawhi Leonard",
+        scoutingReport: "Was a top-4 lock before season-ending thumb injury. NBA teams still have him penciled in high but injury adds risk.",
+        nbaReadiness: 75,
+        ceiling: 95,
+        floor: 60
+      },
+      {
+        id: "m11",
+        name: "Jayden Quaintance",
+        team: "Kentucky",
+        position: "C/PF",
+        height: "6'10\"",
+        weight: 230,
+        age: 19,
+        year: "Sophomore",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 11.2, rpg: 8.5, apg: 1.5, spg: 0.8, bpg: 2.8, fgPct: 62.1, threePct: 0, ftPct: 68.5, mpg: 28.3, to: 1.5, per: 24.2, ts: 63.0 },
+        tourneyStats: { ppg: 14.0, rpg: 10.5, apg: 2.0, spg: 1.0, bpg: 3.5, fgPct: 65.0, threePct: 0, ftPct: 70.0, gamesPlayed: 2 },
+        preTourneyRank: 8,
+        currentProjection: 11,
+        trend: "steady",
+        stockChange: -3,
+        strengths: ["Rim protection", "Athleticism", "Youth (still 19)", "Upside"],
+        weaknesses: ["ACL history", "Offensive limitations", "Free throws"],
+        comparison: "Clint Capela / Robert Williams III",
+        scoutingReport: "Tore ACL as freshman, came back strong. Elite rim protector at age 17 as freshman. Considerable upside.",
+        nbaReadiness: 65,
+        ceiling: 88,
+        floor: 55
+      },
+      {
+        id: "m12",
+        name: "Ja'Kobi Gillespie",
+        team: "Tennessee",
+        position: "SG/PG",
+        height: "6'1\"",
+        weight: 180,
+        age: 22,
+        year: "Senior",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 18.5, rpg: 3.2, apg: 5.8, spg: 1.4, bpg: 0.2, fgPct: 45.2, threePct: 36.8, ftPct: 83.1, mpg: 34.2, to: 2.6, per: 21.8, ts: 58.2 },
+        tourneyStats: { ppg: 25.0, rpg: 3.0, apg: 7.5, spg: 1.5, bpg: 0.0, fgPct: 48.0, threePct: 40.0, ftPct: 90.0, gamesPlayed: 2 },
+        preTourneyRank: 22,
+        currentProjection: 14,
+        trend: "rising",
+        stockChange: +8,
+        strengths: ["Scoring burst", "Playmaking", "Experience", "Clutch"],
+        weaknesses: ["Age (22)", "Size", "Defensive limitations"],
+        comparison: "Fred VanVleet / Marcus Smart",
+        scoutingReport: "29 pts/9 ast in R1 vs Miami OH. 21/6 vs Virginia in R2 upset. Maryland transfer balling out.",
+        nbaReadiness: 83,
+        ceiling: 82,
+        floor: 72
+      },
+      {
+        id: "m13",
+        name: "Matas Vokietaitis",
+        team: "Texas",
+        position: "C",
+        height: "7'0\"",
+        weight: 240,
+        age: 20,
+        year: "Sophomore",
+        nationality: "Lithuania",
+        photo: null,
+        seasonStats: { ppg: 13.5, rpg: 8.8, apg: 1.8, spg: 0.6, bpg: 2.1, fgPct: 55.8, threePct: 28.5, ftPct: 72.4, mpg: 30.2, to: 1.4, per: 22.5, ts: 60.8 },
+        tourneyStats: { ppg: 18.3, rpg: 11.0, apg: 2.0, spg: 0.7, bpg: 2.7, fgPct: 58.0, threePct: 33.3, ftPct: 75.0, gamesPlayed: 3 },
+        preTourneyRank: 18,
+        currentProjection: 12,
+        trend: "rising",
+        stockChange: +6,
+        strengths: ["Size", "Rebounding", "Shot blocking", "Improving offensive game"],
+        weaknesses: ["Mobility", "Perimeter defense switches"],
+        comparison: "Jonas Valanciunas / Kristaps Porzingis",
+        scoutingReport: "Averaged 18.3 pts and 11.0 reb in 3 tourney games. 7-footer anchoring Texas's surprising Sweet 16 run.",
+        nbaReadiness: 72,
+        ceiling: 86,
+        floor: 65
+      },
+      {
+        id: "m14",
+        name: "Jeremy Fears Jr.",
+        team: "Michigan State",
+        position: "PG",
+        height: "6'1\"",
+        weight: 185,
+        age: 20,
+        year: "Sophomore",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 12.1, rpg: 3.5, apg: 9.2, spg: 1.8, bpg: 0.1, fgPct: 43.5, threePct: 33.2, ftPct: 78.5, mpg: 34.8, to: 3.1, per: 19.8, ts: 55.2 },
+        tourneyStats: { ppg: 14.0, rpg: 4.0, apg: 10.5, spg: 2.5, bpg: 0.0, fgPct: 45.0, threePct: 35.0, ftPct: 80.0, gamesPlayed: 2 },
+        preTourneyRank: 16,
+        currentProjection: 15,
+        trend: "rising",
+        stockChange: +1,
+        strengths: ["Elite passer", "Ball pressure defense", "Leadership", "Tempo control"],
+        weaknesses: ["Scoring efficiency", "Turnovers", "Size"],
+        comparison: "Rajon Rondo / Jose Alvarado",
+        scoutingReport: "NCAA all-time assists leader candidate. 9.2 dimes per game leads the nation. True floor general.",
+        nbaReadiness: 76,
+        ceiling: 84,
+        floor: 68
+      },
+      {
+        id: "m15",
+        name: "Alvaro Folgueiras",
+        team: "Iowa",
+        position: "SF/PF",
+        height: "6'7\"",
+        weight: 210,
+        age: 21,
+        year: "Junior",
+        nationality: "Spain",
+        photo: null,
+        seasonStats: { ppg: 13.8, rpg: 6.2, apg: 2.5, spg: 0.9, bpg: 0.8, fgPct: 46.5, threePct: 38.8, ftPct: 81.2, mpg: 31.5, to: 1.6, per: 20.2, ts: 59.5 },
+        tourneyStats: { ppg: 16.5, rpg: 7.0, apg: 3.0, spg: 1.0, bpg: 1.0, fgPct: 48.0, threePct: 42.9, ftPct: 85.0, gamesPlayed: 2 },
+        preTourneyRank: 30,
+        currentProjection: 19,
+        trend: "rising",
+        stockChange: +11,
+        strengths: ["Clutch shooting", "Versatility", "Basketball IQ", "Toughness"],
+        weaknesses: ["Athleticism", "First step", "Creating off the dribble"],
+        comparison: "Dario Saric / Nicolas Batum",
+        scoutingReport: "Hit the corner 3 with <5 seconds left to upset #1 Florida. Catapulted Iowa to first Sweet 16 since 1999.",
+        nbaReadiness: 74,
+        ceiling: 82,
+        floor: 68
+      }
+    ]
+  },
+
+  // ===== WOMEN'S TOURNAMENT =====
+  womens: {
+    bracket: {
+      portland: {
+        name: "Portland Region",
+        sweet16: [
+          { seed: 1, team: "UConn", record: "34-0", score1: 90, opp1: "UTSA", score2: 82, opp2: "NC State" },
+          { seed: 4, team: "North Carolina", record: "27-7", score1: 78, opp1: "Drake", score2: 74, opp2: "Maryland" },
+          { seed: 2, team: "Vanderbilt", record: "28-5", score1: 102, opp1: "High Point", score2: 75, opp2: "Illinois" },
+          { seed: 6, team: "Notre Dame", record: "24-9", score1: 71, opp1: "UNC Wilmington", score2: 68, opp2: "Ohio State" }
+        ]
+      },
+      sacramento: {
+        name: "Sacramento Region",
+        sweet16: [
+          { seed: 1, team: "Texas", record: "31-3", score1: 89, opp1: "Northern Colorado", score2: 100, opp2: "Oregon" },
+          { seed: 3, team: "TCU", record: "27-6", score1: 76, opp1: "FGCU", score2: 62, opp2: "Washington" },
+          { seed: 10, team: "Virginia", record: "22-12", score1: 74, opp1: "Marquette", score2: 83, opp2: "Iowa" },
+          { seed: 4, team: "Oklahoma", record: "26-7", score1: 82, opp1: "Chattanooga", score2: 77, opp2: "Michigan State" }
+        ]
+      },
+      fortworth: {
+        name: "Fort Worth Region",
+        sweet16: [
+          { seed: 1, team: "UCLA", record: "32-2", score1: 96, opp1: "Cal Baptist", score2: 84, opp2: "Creighton" },
+          { seed: 4, team: "Minnesota", record: "27-6", score1: 75, opp1: "UC Davis", score2: 70, opp2: "Colorado" },
+          { seed: 2, team: "LSU", record: "29-5", score1: 88, opp1: "SE Missouri St", score2: 101, opp2: "Texas Tech" },
+          { seed: 3, team: "Duke", record: "27-6", score1: 79, opp1: "Iona", score2: 69, opp2: "Baylor" }
+        ]
+      },
+      phoenix: {
+        name: "Phoenix Region",
+        sweet16: [
+          { seed: 1, team: "South Carolina", record: "31-3", score1: 91, opp1: "Stonehill", score2: 78, opp2: "Kansas State" },
+          { seed: 9, team: "USC", record: "22-11", score1: 71, opp1: "Clemson", score2: 67, opp2: "Purdue" },
+          { seed: 2, team: "Michigan", record: "28-5", score1: 85, opp1: "ETSU", score2: 92, opp2: "NC State" },
+          { seed: 3, team: "Louisville", record: "27-6", score1: 74, opp1: "Colgate", score2: 69, opp2: "Alabama" }
+        ]
+      }
+    },
+
+    // ===== WOMEN'S WNBA DRAFT PROSPECTS =====
+    prospects: [
+      {
+        id: "w1",
+        name: "Azzi Fudd",
+        team: "UConn",
+        position: "G",
+        height: "5'11\"",
+        weight: 150,
+        age: 23,
+        year: "Senior",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 17.7, rpg: 3.4, apg: 3.1, spg: 1.2, bpg: 0.3, fgPct: 44.8, threePct: 44.6, ftPct: 90.2, mpg: 32.5, to: 1.8, per: 26.5, ts: 64.8 },
+        tourneyStats: { ppg: 21.0, rpg: 4.0, apg: 3.5, spg: 1.5, bpg: 0.5, fgPct: 48.0, threePct: 46.0, ftPct: 92.0, gamesPlayed: 2 },
+        preTourneyRank: 1,
+        currentProjection: 1,
+        trend: "steady",
+        stockChange: 0,
+        strengths: ["Generational shooter", "Off-ball movement", "Scoring arsenal", "Winner"],
+        weaknesses: ["Injury history", "Defensive effort at times"],
+        comparison: "Diana Taurasi",
+        scoutingReport: "Projected No. 1 overall. Leading UConn to potential undefeated season and back-to-back titles. 44.6% from three.",
+        nbaReadiness: 95,
+        ceiling: 98,
+        floor: 85
+      },
+      {
+        id: "w2",
+        name: "Lauren Betts",
+        team: "UCLA",
+        position: "C",
+        height: "6'7\"",
+        weight: 195,
+        age: 22,
+        year: "Senior",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 16.4, rpg: 8.6, apg: 3.2, spg: 1.1, bpg: 1.9, fgPct: 56.2, threePct: 0, ftPct: 72.5, mpg: 30.8, to: 1.4, per: 28.2, ts: 62.5 },
+        tourneyStats: { ppg: 18.0, rpg: 9.5, apg: 3.0, spg: 1.0, bpg: 2.5, fgPct: 58.0, threePct: 0, ftPct: 75.0, gamesPlayed: 2 },
+        preTourneyRank: 2,
+        currentProjection: 2,
+        trend: "steady",
+        stockChange: 0,
+        strengths: ["Size (6'7\")", "Defensive anchor", "Passing for a big", "Shot blocking"],
+        weaknesses: ["No three-point range", "Free throw shooting"],
+        comparison: "Brittney Griner / A'ja Wilson",
+        scoutingReport: "Exceptional two-way center. 16.4/8.6/3.2 with 1.9 blocks. Height alone is valuable; defense makes her elite.",
+        nbaReadiness: 93,
+        ceiling: 97,
+        floor: 82
+      },
+      {
+        id: "w3",
+        name: "Olivia Miles",
+        team: "TCU",
+        position: "G",
+        height: "5'10\"",
+        weight: 160,
+        age: 23,
+        year: "Senior",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 20.5, rpg: 6.8, apg: 6.6, spg: 1.9, bpg: 0.4, fgPct: 44.2, threePct: 36.8, ftPct: 78.5, mpg: 35.2, to: 3.1, per: 25.8, ts: 57.2 },
+        tourneyStats: { ppg: 22.0, rpg: 7.0, apg: 7.0, spg: 2.0, bpg: 0.5, fgPct: 45.0, threePct: 38.0, ftPct: 80.0, gamesPlayed: 2 },
+        preTourneyRank: 3,
+        currentProjection: 3,
+        trend: "rising",
+        stockChange: 0,
+        strengths: ["Triple-double threat", "Court vision", "Scoring volume", "Rebounding guard"],
+        weaknesses: ["Efficiency", "Turnovers", "Shot selection"],
+        comparison: "Sabrina Ionescu / Sue Bird",
+        scoutingReport: "Career-high 40 points with 10 threes vs Baylor. Leads TCU in points (20.5), assists (6.6), steals (1.9).",
+        nbaReadiness: 90,
+        ceiling: 95,
+        floor: 78
+      },
+      {
+        id: "w4",
+        name: "Kiki Rice",
+        team: "UCLA",
+        position: "G",
+        height: "5'11\"",
+        weight: 155,
+        age: 22,
+        year: "Senior",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 15.3, rpg: 6.0, apg: 4.8, spg: 1.5, bpg: 0.3, fgPct: 50.4, threePct: 38.1, ftPct: 89.1, mpg: 33.1, to: 2.0, per: 24.1, ts: 62.0 },
+        tourneyStats: { ppg: 17.0, rpg: 6.5, apg: 5.0, spg: 1.5, bpg: 0.5, fgPct: 52.0, threePct: 40.0, ftPct: 90.0, gamesPlayed: 2 },
+        preTourneyRank: 5,
+        currentProjection: 4,
+        trend: "rising",
+        stockChange: +1,
+        strengths: ["Efficiency", "Defense", "Versatility", "FT shooting", "Leadership"],
+        weaknesses: ["Scoring volume", "Explosiveness"],
+        comparison: "Jordin Canada / Chelsea Gray",
+        scoutingReport: "Do-it-all guard. Career-best 50.4% FG, 38.1% from three, 89.1% FT. Complete two-way guard.",
+        nbaReadiness: 91,
+        ceiling: 92,
+        floor: 80
+      },
+      {
+        id: "w5",
+        name: "Madison Booker",
+        team: "Texas",
+        position: "G/F",
+        height: "6'0\"",
+        weight: 165,
+        age: 20,
+        year: "Sophomore",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 18.2, rpg: 5.5, apg: 4.1, spg: 1.8, bpg: 0.5, fgPct: 47.5, threePct: 35.2, ftPct: 82.8, mpg: 34.0, to: 2.3, per: 25.0, ts: 59.8 },
+        tourneyStats: { ppg: 28.5, rpg: 6.0, apg: 4.5, spg: 2.5, bpg: 0.5, fgPct: 52.0, threePct: 40.0, ftPct: 88.0, gamesPlayed: 2 },
+        preTourneyRank: 6,
+        currentProjection: 5,
+        trend: "rising",
+        stockChange: +1,
+        strengths: ["Scoring explosion", "Athleticism", "Two-way impact", "Youth"],
+        weaknesses: ["Decision making", "Three-point consistency"],
+        comparison: "Kelsey Plum / Jewell Loyd",
+        scoutingReport: "40 points vs Oregon - most ever by a Texas player in an NCAA tourney game. Historic performance catapults stock.",
+        nbaReadiness: 88,
+        ceiling: 96,
+        floor: 75
+      },
+      {
+        id: "w6",
+        name: "Sarah Strong",
+        team: "UConn",
+        position: "F",
+        height: "6'2\"",
+        weight: 175,
+        age: 19,
+        year: "Freshman",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 15.8, rpg: 7.2, apg: 2.8, spg: 1.3, bpg: 1.0, fgPct: 49.5, threePct: 34.8, ftPct: 76.5, mpg: 31.5, to: 1.9, per: 24.5, ts: 59.0 },
+        tourneyStats: { ppg: 17.5, rpg: 8.0, apg: 3.0, spg: 1.5, bpg: 1.5, fgPct: 50.0, threePct: 33.3, ftPct: 80.0, gamesPlayed: 2 },
+        preTourneyRank: 4,
+        currentProjection: 6,
+        trend: "steady",
+        stockChange: -2,
+        strengths: ["Versatility", "Motor", "Rebounding", "Two-way impact", "Youth"],
+        weaknesses: ["Outside shooting", "FT consistency"],
+        comparison: "Breanna Stewart (young)",
+        scoutingReport: "Co-leading UConn alongside Fudd. Likely returns for sophomore year but already a top WNBA prospect.",
+        nbaReadiness: 82,
+        ceiling: 97,
+        floor: 72
+      },
+      {
+        id: "w7",
+        name: "Cotie McMahon",
+        team: "Ole Miss",
+        position: "F",
+        height: "6'1\"",
+        weight: 170,
+        age: 22,
+        year: "Junior",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 19.9, rpg: 6.8, apg: 2.5, spg: 1.6, bpg: 0.8, fgPct: 46.8, threePct: 33.5, ftPct: 77.2, mpg: 34.5, to: 2.4, per: 23.8, ts: 57.5 },
+        tourneyStats: { ppg: 18.0, rpg: 7.0, apg: 2.5, spg: 1.5, bpg: 1.0, fgPct: 44.0, threePct: 30.0, ftPct: 80.0, gamesPlayed: 1 },
+        preTourneyRank: 7,
+        currentProjection: 7,
+        trend: "steady",
+        stockChange: 0,
+        strengths: ["Scoring improvement", "Athleticism", "Transition game", "Motor"],
+        weaknesses: ["Three-point consistency", "Passing"],
+        comparison: "Alyssa Thomas / Angel Reese",
+        scoutingReport: "Steady improvement from OSU transfer. 19.9 PPG this year. Owns the court on both ends.",
+        nbaReadiness: 85,
+        ceiling: 90,
+        floor: 74
+      },
+      {
+        id: "w8",
+        name: "Ta'Niya Latson",
+        team: "South Carolina",
+        position: "G",
+        height: "5'7\"",
+        weight: 145,
+        age: 21,
+        year: "Junior",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 14.3, rpg: 2.8, apg: 3.5, spg: 1.4, bpg: 0.1, fgPct: 43.5, threePct: 34.2, ftPct: 85.8, mpg: 28.5, to: 2.0, per: 20.5, ts: 57.8 },
+        tourneyStats: { ppg: 16.5, rpg: 3.0, apg: 4.0, spg: 2.0, bpg: 0.0, fgPct: 45.0, threePct: 36.0, ftPct: 88.0, gamesPlayed: 2 },
+        preTourneyRank: 8,
+        currentProjection: 8,
+        trend: "steady",
+        stockChange: 0,
+        strengths: ["Scoring ability", "Speed", "FT shooting", "Ball handling"],
+        weaknesses: ["Size (5'7\")", "Stats dipped on stacked roster"],
+        comparison: "Skylar Diggins-Smith",
+        scoutingReport: "Led nation in scoring at FSU last year (25.2 PPG). Stats down at South Carolina but talent unchanged.",
+        nbaReadiness: 84,
+        ceiling: 91,
+        floor: 72
+      },
+      {
+        id: "w9",
+        name: "Flau'jae Johnson",
+        team: "LSU",
+        position: "G/F",
+        height: "5'10\"",
+        weight: 160,
+        age: 22,
+        year: "Senior",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 13.8, rpg: 5.2, apg: 3.0, spg: 1.2, bpg: 0.4, fgPct: 42.5, threePct: 40.2, ftPct: 78.5, mpg: 33.8, to: 2.2, per: 21.2, ts: 58.5 },
+        tourneyStats: { ppg: 15.0, rpg: 5.5, apg: 3.5, spg: 1.0, bpg: 0.5, fgPct: 44.0, threePct: 42.0, ftPct: 80.0, gamesPlayed: 2 },
+        preTourneyRank: 9,
+        currentProjection: 9,
+        trend: "steady",
+        stockChange: 0,
+        strengths: ["Three-point shooting (40.2%)", "Versatility", "Brand/marketability", "Improved all-around game"],
+        weaknesses: ["Consistency", "Shot selection", "Defense"],
+        comparison: "Arike Ogunbowale",
+        scoutingReport: "Fourth-year LSU guard hitting career-best 40.2% from three. Complete player with star power.",
+        nbaReadiness: 82,
+        ceiling: 88,
+        floor: 70
+      },
+      {
+        id: "w10",
+        name: "Raven Johnson",
+        team: "South Carolina",
+        position: "G",
+        height: "5'8\"",
+        weight: 155,
+        age: 22,
+        year: "Senior",
+        nationality: "USA",
+        photo: null,
+        seasonStats: { ppg: 10.5, rpg: 4.2, apg: 5.8, spg: 2.2, bpg: 0.2, fgPct: 41.8, threePct: 31.5, ftPct: 72.8, mpg: 32.0, to: 2.5, per: 19.5, ts: 52.5 },
+        tourneyStats: { ppg: 12.0, rpg: 4.5, apg: 6.5, spg: 2.5, bpg: 0.0, fgPct: 42.0, threePct: 33.0, ftPct: 75.0, gamesPlayed: 2 },
+        preTourneyRank: 10,
+        currentProjection: 10,
+        trend: "steady",
+        stockChange: 0,
+        strengths: ["Elite defender", "Vision", "Basketball IQ", "Leadership"],
+        weaknesses: ["Scoring", "Shooting", "Size"],
+        comparison: "Courtney Vandersloot / Sue Bird (defensive)",
+        scoutingReport: "One of the best defensive prospects in the draft. Suffocating on-ball defender with elite IQ.",
+        nbaReadiness: 83,
+        ceiling: 86,
+        floor: 73
+      }
+    ]
+  },
+
+  // ===== NBA TEAM INTELLIGENCE (Real 2026 Data) =====
+  // Salary cap: $154.647M | Luxury tax: $187.895M | 1st apron: $195.945M | 2nd apron: $207.824M
+  salaryCap: 154.647,
+  luxuryTax: 187.895,
+
+  nbaTeamNeeds: [
+    {
+      pick: 1, team: "Indiana Pacers", logo: "IND",
+      record: "14-58", conf: "East",
+      needs: ["PF/C", "Star talent", "Franchise player"],
+      capSpace: 12.5, totalSalary: 142.1, capStatus: "Under cap",
+      roster: { pg: "Andrew Nembhard", sg: "Ben Shepard", sf: "Jarace Walker", pf: "---", c: "Myles Turner" },
+      rosterGaps: ["No elite scorer", "Power forward hole", "Need franchise cornerstone"],
+      playStyle: "Motion offense", pace: "Fast (102.1)", offRtg: 105.2, defRtg: 116.8,
+      systemFit: ["Versatile bigs who pass", "High-IQ players", "Switchable defenders"],
+      gLeague: "Noblesville Boom",
+      gLeagueNeeds: ["Wing development", "Backup PG", "Stretch 4"],
+      tankNote: "16-game losing streak. Pick is top-4 protected; if 5-9 goes to Clippers.",
+      gmStrategy: "Full rebuild. Need a franchise cornerstone. BPA regardless of position."
+    },
+    {
+      pick: 2, team: "Washington Wizards", logo: "WAS",
+      record: "15-57", conf: "East",
+      needs: ["PG", "Wing", "Star talent"],
+      capSpace: 18.2, totalSalary: 136.4, capStatus: "Under cap",
+      roster: { pg: "Bilal Coulibaly", sg: "Jordan Poole", sf: "Kyle Kuzma", pf: "Alex Sarr", c: "Jonas Valanciunas" },
+      rosterGaps: ["No true point guard", "Need perimeter creator", "Lack of defensive identity"],
+      playStyle: "Transition-heavy", pace: "Fast (103.5)", offRtg: 106.1, defRtg: 117.2,
+      systemFit: ["Dynamic playmakers", "Transition scorers", "Perimeter defenders"],
+      gLeague: "Capital City Go-Go",
+      gLeagueNeeds: ["Point guard development", "3&D wing", "Backup center"],
+      tankNote: "Also on 16-game losing streak. Sarr is building block; need a backcourt star.",
+      gmStrategy: "Have young pieces (Sarr, Coulibaly). Desperate for elite guard to build around."
+    },
+    {
+      pick: 3, team: "Brooklyn Nets", logo: "BKN",
+      record: "17-55", conf: "East",
+      needs: ["PG", "Wing", "Franchise player"],
+      capSpace: 91.8, totalSalary: 62.8, capStatus: "Massive cap space ($91.8M)",
+      roster: { pg: "Dennis Schroder", sg: "Cam Thomas", sf: "Cam Johnson", pf: "Dorian Finney-Smith", c: "Day'Ron Sharpe" },
+      rosterGaps: ["No franchise player", "Need star wing or PG", "Lack of defensive anchor"],
+      playStyle: "Iso-heavy", pace: "Average (99.2)", offRtg: 107.8, defRtg: 115.6,
+      systemFit: ["Shot creators", "High-usage scorers", "Athletic wings"],
+      gLeague: "Long Island Nets",
+      gLeagueNeeds: ["Young guard development", "Wing depth", "Stretch big"],
+      tankNote: "$91.8M in cap space. Can absorb salary in trades AND draft a star.",
+      gmStrategy: "Nuclear rebuild with historic cap space. BPA + use money to acquire more picks."
+    },
+    {
+      pick: 4, team: "Sacramento Kings", logo: "SAC",
+      record: "19-53", conf: "West",
+      needs: ["PF/C", "Rim protector", "Two-way wing"],
+      capSpace: -8.5, totalSalary: 163.1, capStatus: "Over 1st apron",
+      roster: { pg: "De'Aaron Fox", sg: "Malik Monk", sf: "DeMar DeRozan", pf: "Keegan Murray", c: "Domantas Sabonis" },
+      rosterGaps: ["No rim protection", "Aging core", "Defensive identity completely absent"],
+      playStyle: "Fast pace, high scoring", pace: "Very fast (104.8)", offRtg: 114.2, defRtg: 118.5,
+      systemFit: ["Rim protectors", "Switchable bigs", "Defensive anchors", "Players who run the floor"],
+      gLeague: "Stockton Kings",
+      gLeagueNeeds: ["Defensive big man", "3&D wing", "Backup PG"],
+      tankNote: "Won 5 of last 8, sliding to 4th. Bloated payroll; trades expected.",
+      gmStrategy: "Need to address horrific defense. Rim protector or versatile defensive big is priority."
+    },
+    {
+      pick: 5, team: "Utah Jazz", logo: "UTA",
+      record: "21-51", conf: "West",
+      needs: ["PG", "Star wing", "Franchise scorer"],
+      capSpace: 6.8, totalSalary: 147.8, capStatus: "Under cap",
+      roster: { pg: "Keyonte George", sg: "Collin Sexton", sf: "Lauri Markkanen", pf: "Walker Kessler", c: "John Collins" },
+      rosterGaps: ["No elite perimeter creator", "Frontcourt logjam", "Need a true #1 option"],
+      playStyle: "Half-court oriented", pace: "Slow (96.8)", offRtg: 108.5, defRtg: 114.2,
+      systemFit: ["Ball-dominant guards", "Perimeter scorers", "Players who create for others"],
+      gLeague: "Salt Lake City Stars",
+      gLeagueNeeds: ["Point guard", "Wing scorer", "Stretch 4"],
+      tankNote: "Fined for resting top players. Positioning for lottery.",
+      gmStrategy: "Markkanen/Kessler give frontcourt foundation. Need elite guard or wing scorer."
+    },
+    {
+      pick: 6, team: "Dallas Mavericks", logo: "DAL",
+      record: "22-50", conf: "West",
+      needs: ["SG/SF", "3&D wing", "Defensive stopper"],
+      capSpace: -15.2, totalSalary: 169.8, capStatus: "Over 1st apron",
+      roster: { pg: "Spencer Dinwiddie", sg: "Quentin Grimes", sf: "---", pf: "P.J. Washington", c: "Daniel Gafford" },
+      rosterGaps: ["Lost Luka Doncic (traded to LAL)", "No star wing", "Need perimeter defense badly"],
+      playStyle: "Motion offense", pace: "Average (99.5)", offRtg: 109.2, defRtg: 114.8,
+      systemFit: ["Two-way wings", "Shooters", "Defensive versatility", "High-IQ players"],
+      gLeague: "Texas Legends",
+      gLeagueNeeds: ["Wing scorer", "Point guard", "Defensive big"],
+      tankNote: "Post-Luka rebuild. Washington and Gafford are solid pieces to build around.",
+      gmStrategy: "Rebuilding post-Luka era. Need versatile two-way wing or elite shooter."
+    },
+    {
+      pick: 7, team: "Memphis Grizzlies", logo: "MEM",
+      record: "23-49", conf: "West",
+      needs: ["PG", "Wing scorer", "Perimeter creator"],
+      capSpace: 4.2, totalSalary: 150.4, capStatus: "Near cap",
+      roster: { pg: "Scotty Pippen Jr.", sg: "Desmond Bane", sf: "Jake LaRavia", pf: "Jaren Jackson Jr.", c: "Zach Edey" },
+      rosterGaps: ["Morant likely traded", "Need point guard replacement", "Wing scoring"],
+      playStyle: "Physical, defense-first", pace: "Moderate (98.5)", offRtg: 108.1, defRtg: 112.5,
+      systemFit: ["Tough defenders", "Physical players", "Ball handlers who can defend"],
+      gLeague: "Memphis Hustle",
+      gLeagueNeeds: ["Point guard", "Shooting guard", "Wing depth"],
+      tankNote: "Morant trade expected. JJJ/Edey/Bane core needs a floor general.",
+      gmStrategy: "If Morant goes, PG becomes #1 need. Otherwise, scoring wing to pair with JJJ."
+    },
+    {
+      pick: 8, team: "Milwaukee Bucks", logo: "MIL",
+      record: "24-48", conf: "East",
+      needs: ["PG", "3&D wing", "Shooting"],
+      capSpace: -22.5, totalSalary: 177.1, capStatus: "Over luxury tax",
+      roster: { pg: "Cole Anthony", sg: "AJ Green", sf: "Khris Middleton", pf: "Giannis Antetokounmpo", c: "Brook Lopez" },
+      rosterGaps: ["PG disaster after Lillard injury", "Aging roster", "Need youth injection"],
+      playStyle: "Giannis-centric drive-and-kick", pace: "Fast (101.8)", offRtg: 112.5, defRtg: 113.8,
+      systemFit: ["Floor spacers", "PG who can run PnR with Giannis", "Shooters", "Athletic defenders"],
+      gLeague: "Wisconsin Herd",
+      gLeagueNeeds: ["Point guard", "Shooter", "Wing depth"],
+      tankNote: "Giannis committed but wants contention path. Extension-eligible Oct 1.",
+      gmStrategy: "MUST find PG to pair with Giannis. Floor-spacing guard who runs PnR is ideal."
+    },
+    {
+      pick: 9, team: "Chicago Bulls", logo: "CHI",
+      record: "25-47", conf: "East",
+      needs: ["PG", "Wing scorer", "Center"],
+      capSpace: 32.0, totalSalary: 122.6, capStatus: "Significant cap space",
+      roster: { pg: "Coby White", sg: "---", sf: "Patrick Williams", pf: "---", c: "Nikola Vucevic" },
+      rosterGaps: ["Sold off veterans at deadline", "No #1 scorer", "No long-term center solution"],
+      playStyle: "Balanced", pace: "Average (100.2)", offRtg: 108.8, defRtg: 114.5,
+      systemFit: ["High-upside players", "Scorers", "Athletic bigs", "Versatile wings"],
+      gLeague: "Windy City Bulls",
+      gLeagueNeeds: ["Everything - full rebuild roster"],
+      tankNote: "Hard reset mode. Aggressively sold veterans for draft picks.",
+      gmStrategy: "Full teardown. BPA is king. Need a foundational piece at any position."
+    },
+    {
+      pick: 10, team: "Charlotte Hornets", logo: "CHA",
+      record: "26-46", conf: "East",
+      needs: ["PF/C", "Wing depth", "Interior defense"],
+      capSpace: 8.1, totalSalary: 146.5, capStatus: "Under cap",
+      roster: { pg: "LaMelo Ball", sg: "Brandon Miller", sf: "Grant Williams", pf: "---", c: "Mark Williams" },
+      rosterGaps: ["Frontcourt depth", "No PF", "Defensive consistency"],
+      playStyle: "LaMelo-centric playmaking", pace: "Fast (102.5)", offRtg: 111.2, defRtg: 114.1,
+      systemFit: ["Versatile forwards", "Rim runners", "Shooters to space for LaMelo", "Switchable defenders"],
+      gLeague: "Greensboro Swarm",
+      gLeagueNeeds: ["Power forward", "Wing defender", "Backup big"],
+      tankNote: "LaMelo/Miller core is solid. Need the frontcourt piece.",
+      gmStrategy: "Have guard foundation. Athletic PF/C who can switch and shoot is the dream pick."
+    },
+    {
+      pick: 11, team: "San Antonio Spurs", logo: "SAS",
+      record: "27-45", conf: "West",
+      needs: ["SG", "3&D wing", "Perimeter shooting"],
+      capSpace: 5.5, totalSalary: 149.1, capStatus: "Near cap",
+      roster: { pg: "Chris Paul", sg: "Devin Vassell", sf: "Keldon Johnson", pf: "Jeremy Sochan", c: "Victor Wembanyama" },
+      rosterGaps: ["Need elite shooter next to Wemby", "Perimeter scoring", "SG upgrade"],
+      playStyle: "Wembanyama-centric defense", pace: "Moderate (98.8)", offRtg: 109.5, defRtg: 108.2,
+      systemFit: ["Elite shooters (space for Wemby)", "3&D wings", "Smart defenders", "Off-ball players"],
+      gLeague: "Austin Spurs",
+      gLeagueNeeds: ["Shooting guard", "3&D wing", "Backup big"],
+      tankNote: "Wemby is generational. Need to surround him with shooting.",
+      gmStrategy: "Any elite shooter or 3&D wing is gold. Spacing around Wemby is everything."
+    },
+    {
+      pick: 12, team: "Atlanta Hawks", logo: "ATL",
+      record: "28-44", conf: "East",
+      needs: ["SF/PF", "Defense", "Two-way wing"],
+      capSpace: 3.2, totalSalary: 151.4, capStatus: "Near cap",
+      roster: { pg: "Trae Young", sg: "Dyson Daniels", sf: "Zaccharie Risacher", pf: "Jalen Johnson", c: "Onyeka Okongwu" },
+      rosterGaps: ["Defensive wing next to Trae", "3-and-D forward", "Rebounding"],
+      playStyle: "Trae Young PnR offense", pace: "Fast (102.0)", offRtg: 113.5, defRtg: 113.2,
+      systemFit: ["Defensive wings", "Players who don't need the ball", "Rebounders", "Switchable forwards"],
+      gLeague: "College Park Skyhawks",
+      gLeagueNeeds: ["Wing defender", "Stretch big", "Backup guard"],
+      tankNote: "Own Pelicans' unprotected 1st too. Young core developing.",
+      gmStrategy: "Have offense via Trae. Need defensive identity. Two-way wing is priority."
+    },
+    {
+      pick: 13, team: "Portland Trail Blazers", logo: "POR",
+      record: "29-43", conf: "West",
+      needs: ["Wing scorer", "PG depth", "Shooting"],
+      capSpace: 10.8, totalSalary: 143.8, capStatus: "Under cap",
+      roster: { pg: "Scoot Henderson", sg: "Shaedon Sharpe", sf: "Deni Avdija", pf: "Deandre Ayton", c: "Robert Williams III" },
+      rosterGaps: ["Consistent wing scorer", "Floor spacing", "Veteran leadership"],
+      playStyle: "Young, athletic", pace: "Fast (101.5)", offRtg: 110.2, defRtg: 113.5,
+      systemFit: ["Shooters to space for Scoot", "Versatile scorers", "Wing depth"],
+      gLeague: "Rip City Remix",
+      gLeagueNeeds: ["Wing scorer", "Stretch 4", "Backup PG"],
+      tankNote: "Young core of Scoot/Sharpe/Avdija. Need to add shooting.",
+      gmStrategy: "Scoot needs shooters. Any prospect who spaces the floor and scores efficiently."
+    },
+    {
+      pick: 14, team: "Detroit Pistons", logo: "DET",
+      record: "30-42", conf: "East",
+      needs: ["SG", "Shooting", "Wing depth"],
+      capSpace: 24.6, totalSalary: 130.0, capStatus: "Under cap",
+      roster: { pg: "Cade Cunningham", sg: "Jaden Ivey", sf: "Ausar Thompson", pf: "Tobias Harris", c: "Jalen Duren" },
+      rosterGaps: ["Perimeter shooting", "3&D wing", "Spacing around Cade"],
+      playStyle: "Cade Cunningham-centric", pace: "Moderate (99.8)", offRtg: 110.5, defRtg: 112.8,
+      systemFit: ["Elite shooters", "3&D wings", "Off-ball players", "Floor spacers"],
+      gLeague: "Motor City Cruise",
+      gLeagueNeeds: ["Shooter", "Wing defender", "Stretch big"],
+      tankNote: "Cade is the guy. Need to build around him with shooting.",
+      gmStrategy: "Cade needs shooters badly. Elite 3-point marksman or 3&D wing is the move."
+    },
+    {
+      pick: 15, team: "New Orleans Pelicans", logo: "NOP",
+      record: "31-41", conf: "West",
+      needs: ["SG/SF", "Shooting", "Perimeter defense"],
+      capSpace: 21.6, totalSalary: 133.0, capStatus: "Under cap",
+      roster: { pg: "CJ McCollum", sg: "Trey Murphy III", sf: "Brandon Ingram", pf: "Zion Williamson", c: "Derik Queen" },
+      rosterGaps: ["Zion/Queen frontcourt fit", "Perimeter shooting", "Defensive guards"],
+      playStyle: "Interior-focused", pace: "Moderate (99.0)", offRtg: 110.8, defRtg: 112.2,
+      systemFit: ["Perimeter shooters", "Defensive wings", "Players who complement Zion"],
+      gLeague: "Birmingham Squadron",
+      gLeagueNeeds: ["Wing shooter", "Defensive guard", "Stretch big"],
+      tankNote: "Traded 1st to Hawks. This pick is via separate trade. Zion fit is key question.",
+      gmStrategy: "Need shooting to space for Zion. 3&D wing or elite shooter who defends."
+    },
+    {
+      pick: 16, team: "Miami Heat", logo: "MIA",
+      record: "33-39", conf: "East",
+      needs: ["PG", "Wing scorer", "Youth"],
+      capSpace: -5.2, totalSalary: 159.8, capStatus: "Over cap",
+      roster: { pg: "Terry Rozier", sg: "Tyler Herro", sf: "Jimmy Butler", pf: "Bam Adebayo", c: "Kevin Love" },
+      rosterGaps: ["Aging core", "Need youth infusion", "Perimeter creator"],
+      playStyle: "Heat Culture defense-first", pace: "Moderate (98.5)", offRtg: 111.5, defRtg: 110.2,
+      systemFit: ["Tough defenders", "3&D wings", "High-motor players", "Shooters"],
+      gLeague: "Sioux Falls Skyforce",
+      gLeagueNeeds: ["Wing depth", "Guard development", "Stretch big"],
+      tankNote: "Butler aging out. Need to start transition planning.",
+      gmStrategy: "Heat Culture values defense and toughness. Need young 3&D wing or tough guard."
+    },
+    {
+      pick: 17, team: "Golden State Warriors", logo: "GSW",
+      record: "34-38", conf: "West",
+      needs: ["Wing", "Young star", "Curry successor"],
+      capSpace: -28.5, totalSalary: 183.1, capStatus: "Over luxury tax",
+      roster: { pg: "Stephen Curry", sg: "Buddy Hield", sf: "Andrew Wiggins", pf: "Draymond Green", c: "Kevon Looney" },
+      rosterGaps: ["Curry turns 38", "Need heir apparent", "Youth at every position"],
+      playStyle: "Motion offense, 3-point heavy", pace: "Fast (102.5)", offRtg: 114.8, defRtg: 112.5,
+      systemFit: ["Elite shooters", "High-IQ passers", "Off-ball movers", "Switchable defenders"],
+      gLeague: "Santa Cruz Warriors",
+      gLeagueNeeds: ["Guard development", "Wing scorer", "Big man"],
+      tankNote: "Up to 5 first-round picks to trade. Could package to move up.",
+      gmStrategy: "Need Curry's eventual replacement. Elite shooter or playmaker who fits motion offense."
+    },
+    {
+      pick: 18, team: "Los Angeles Lakers", logo: "LAL",
+      record: "35-37", conf: "West",
+      needs: ["Defensive wing", "Center depth", "Youth"],
+      capSpace: -18.0, totalSalary: 172.6, capStatus: "Over luxury tax",
+      roster: { pg: "Austin Reaves", sg: "Luka Doncic", sf: "LeBron James", pf: "Rui Hachimura", c: "Anthony Davis" },
+      rosterGaps: ["Perimeter defense", "Wing depth", "Post-LeBron planning"],
+      playStyle: "Star-driven iso + PnR", pace: "Average (100.1)", offRtg: 115.2, defRtg: 112.8,
+      systemFit: ["3&D wings", "Defensive stoppers", "Athletic rim runners", "Spot-up shooters"],
+      gLeague: "South Bay Lakers",
+      gLeagueNeeds: ["Wing defender", "Backup big", "Point guard"],
+      tankNote: "Doncic/LeBron/AD trio is potent but defense-limited on perimeter.",
+      gmStrategy: "Need a lockdown perimeter defender. Any 3&D wing or switchable forward."
+    },
+    {
+      pick: 19, team: "Houston Rockets", logo: "HOU",
+      record: "36-36", conf: "West",
+      needs: ["PG", "Playmaker", "Point-of-attack creator"],
+      capSpace: 2.5, totalSalary: 152.1, capStatus: "Near cap",
+      roster: { pg: "Fred VanVleet", sg: "Jalen Green", sf: "Dillon Brooks", pf: "Jabari Smith Jr.", c: "Alperen Sengun" },
+      rosterGaps: ["True floor general", "Backup PG", "Consistent 3-point shooting"],
+      playStyle: "Young, athletic, defense-first", pace: "Fast (101.8)", offRtg: 112.5, defRtg: 109.8,
+      systemFit: ["Playmakers", "Defensive guards", "Floor spacers", "Athletic wings"],
+      gLeague: "Rio Grande Valley Vipers",
+      gLeagueNeeds: ["Point guard", "Shooting guard", "Wing"],
+      tankNote: "Young core developing. VanVleet aging; need long-term PG solution.",
+      gmStrategy: "Need a young playmaker to eventually replace VanVleet. PG or combo guard."
+    },
+    {
+      pick: 20, team: "Orlando Magic", logo: "ORL",
+      record: "37-35", conf: "East",
+      needs: ["Shooting", "Wing scorer", "Floor spacing"],
+      capSpace: -12.0, totalSalary: 166.6, capStatus: "Over 1st apron",
+      roster: { pg: "Jalen Suggs", sg: "---", sf: "Franz Wagner", pf: "Paolo Banchero", c: "Wendell Carter Jr." },
+      rosterGaps: ["3-point shooting", "Shot creation off bench", "SG hole"],
+      playStyle: "Length-based defense", pace: "Slow (97.2)", offRtg: 110.8, defRtg: 106.5,
+      systemFit: ["Elite shooters", "Spot-up threats", "Versatile wings", "High-IQ players"],
+      gLeague: "Osceola Magic",
+      gLeagueNeeds: ["Shooter", "Guard", "Stretch big"],
+      tankNote: "Paolo/Franz core is elite. Just need shooting around them.",
+      gmStrategy: "Shooting is the #1 need. Any elite 3-point threat who can play off the ball."
+    },
+    {
+      pick: 21, team: "Phoenix Suns", logo: "PHX",
+      record: "38-34", conf: "West",
+      needs: ["Wing depth", "Defensive big", "Youth"],
+      capSpace: -35.0, totalSalary: 189.6, capStatus: "Deep into luxury tax",
+      roster: { pg: "Tyus Jones", sg: "Devin Booker", sf: "Kevin Durant", pf: "---", c: "Jusuf Nurkic" },
+      rosterGaps: ["Wing depth behind stars", "PF hole", "Youth injection needed"],
+      playStyle: "Star-driven scoring", pace: "Average (99.8)", offRtg: 116.2, defRtg: 113.5,
+      systemFit: ["3&D role players", "Athletic wings", "Switchable defenders", "Low-usage contributors"],
+      gLeague: "Valley Suns",
+      gLeagueNeeds: ["Wing", "Forward", "Guard depth"],
+      tankNote: "Win-now mode with Booker/KD. Need cheap young talent.",
+      gmStrategy: "Need low-cost high-impact role player. 3&D wing on rookie deal is ideal."
+    },
+    {
+      pick: 22, team: "Minnesota Timberwolves", logo: "MIN",
+      record: "39-33", conf: "West",
+      needs: ["Wing depth", "Perimeter shooting", "Guard"],
+      capSpace: -10.5, totalSalary: 165.1, capStatus: "Over 1st apron",
+      roster: { pg: "Mike Conley", sg: "Anthony Edwards", sf: "Jaden McDaniels", pf: "Julius Randle", c: "Rudy Gobert" },
+      rosterGaps: ["Perimeter depth", "Conley replacement", "Bench scoring"],
+      playStyle: "Defense-anchored by Gobert", pace: "Moderate (98.5)", offRtg: 113.2, defRtg: 108.5,
+      systemFit: ["3&D wings", "Shooters", "Athletic guards", "Low-usage scorers"],
+      gLeague: "Iowa Wolves",
+      gLeagueNeeds: ["Guard", "Wing shooter", "Backup big"],
+      tankNote: "Ant is the franchise. Need to build depth cheaply.",
+      gmStrategy: "Need shooting and guard depth. Any reliable 3-point threat helps."
+    },
+    {
+      pick: 23, team: "Cleveland Cavaliers", logo: "CLE",
+      record: "42-30", conf: "East",
+      needs: ["Wing depth", "3&D backup", "Shooter"],
+      capSpace: -8.2, totalSalary: 162.8, capStatus: "Over 1st apron",
+      roster: { pg: "Darius Garland", sg: "Donovan Mitchell", sf: "Max Strus", pf: "Evan Mobley", c: "Jarrett Allen" },
+      rosterGaps: ["Wing depth (Strus injured)", "Bench scoring", "Playoff-ready role player"],
+      playStyle: "Balanced, twin-tower defense", pace: "Moderate (99.0)", offRtg: 115.8, defRtg: 107.2,
+      systemFit: ["3&D wings", "Off-ball shooters", "Switchable defenders", "Low-maintenance contributors"],
+      gLeague: "Cleveland Charge",
+      gLeagueNeeds: ["Wing", "Guard depth", "Forward"],
+      tankNote: "Contender. Need depth pieces on rookie deals.",
+      gmStrategy: "Need a 3&D wing to contribute immediately in the playoffs."
+    },
+    {
+      pick: 24, team: "New York Knicks", logo: "NYK",
+      record: "43-29", conf: "East",
+      needs: ["Center", "Wing depth", "Bench scoring"],
+      capSpace: -20.5, totalSalary: 175.1, capStatus: "Over luxury tax",
+      roster: { pg: "Jalen Brunson", sg: "Mikal Bridges", sf: "OG Anunoby", pf: "Karl-Anthony Towns", c: "Mitchell Robinson" },
+      rosterGaps: ["Center depth", "Bench scoring", "Athletic wing off bench"],
+      playStyle: "Brunson-centric half-court", pace: "Slow (97.5)", offRtg: 114.5, defRtg: 109.8,
+      systemFit: ["Defensive bigs", "3&D wings", "Off-ball players", "High-IQ role players"],
+      gLeague: "Westchester Knicks",
+      gLeagueNeeds: ["Center", "Wing", "Guard"],
+      tankNote: "Contender but thin bench. Need cheap, ready contributors.",
+      gmStrategy: "Need athletic center or ready-now wing who can defend and shoot."
+    },
+    {
+      pick: 25, team: "Denver Nuggets", logo: "DEN",
+      record: "44-28", conf: "West",
+      needs: ["PG depth", "Wing defender", "Guard"],
+      capSpace: -22.0, totalSalary: 176.6, capStatus: "Over luxury tax",
+      roster: { pg: "Jamal Murray", sg: "Christian Braun", sf: "Michael Porter Jr.", pf: "Aaron Gordon", c: "Nikola Jokic" },
+      rosterGaps: ["Point guard depth", "Perimeter defense", "Bench scoring"],
+      playStyle: "Jokic-centric passing offense", pace: "Average (99.5)", offRtg: 117.5, defRtg: 111.2,
+      systemFit: ["Smart cutters", "3&D wings", "Defensive guards", "Players who play off Jokic"],
+      gLeague: "Grand Rapids Gold",
+      gLeagueNeeds: ["Guard", "Wing defender", "Big man"],
+      tankNote: "Title contender. Jokic makes everyone better; need smart role players.",
+      gmStrategy: "Need someone who can cut, shoot, and defend. High-IQ player to play off Jokic."
+    },
+    {
+      pick: 26, team: "Philadelphia 76ers", logo: "PHI",
+      record: "34-38", conf: "East",
+      needs: ["Wing", "PG depth", "Defensive versatility"],
+      capSpace: -15.0, totalSalary: 169.6, capStatus: "Over 1st apron",
+      roster: { pg: "Tyrese Maxey", sg: "---", sf: "Paul George", pf: "Caleb Martin", c: "Joel Embiid" },
+      rosterGaps: ["SG hole", "Wing depth", "Embiid health insurance"],
+      playStyle: "Embiid post-up + Maxey speed", pace: "Average (99.8)", offRtg: 113.2, defRtg: 111.5,
+      systemFit: ["3&D wings", "Versatile defenders", "Floor spacers", "Athletic guards"],
+      gLeague: "Delaware Blue Coats",
+      gLeagueNeeds: ["Wing", "Guard", "Big man depth"],
+      tankNote: "Embiid health is the wildcard. Need versatile pieces that work with or without him.",
+      gmStrategy: "Versatile 3&D wing who can play multiple positions and space the floor."
+    },
+    {
+      pick: 27, team: "Toronto Raptors", logo: "TOR",
+      record: "28-44", conf: "East",
+      needs: ["PG", "Star wing", "Franchise cornerstone"],
+      capSpace: 15.8, totalSalary: 138.8, capStatus: "Under cap",
+      roster: { pg: "Immanuel Quickley", sg: "Gradey Dick", sf: "RJ Barrett", pf: "Scottie Barnes", c: "Jakob Poeltl" },
+      rosterGaps: ["True point guard", "Elite wing scorer", "Defensive consistency"],
+      playStyle: "Barnes-centric versatile offense", pace: "Fast (102.0)", offRtg: 110.5, defRtg: 113.2,
+      systemFit: ["Playmaking guards", "Versatile wings", "Switchable defenders", "High-IQ players"],
+      gLeague: "Raptors 905",
+      gLeagueNeeds: ["Point guard", "Wing", "Stretch big"],
+      tankNote: "Barnes is the centerpiece. Young core developing but need another star.",
+      gmStrategy: "Scottie Barnes needs a true PG or star wing running mate. Playmaker preferred."
+    },
+    {
+      pick: 28, team: "Oklahoma City Thunder", logo: "OKC",
+      record: "52-20", conf: "West",
+      needs: ["Wing depth", "Veteran presence", "Rim protector"],
+      capSpace: -18.5, totalSalary: 173.1, capStatus: "Over luxury tax",
+      roster: { pg: "Shai Gilgeous-Alexander", sg: "Luguentz Dort", sf: "Jalen Williams", pf: "Chet Holmgren", c: "Isaiah Hartenstein" },
+      rosterGaps: ["Wing depth", "Backup center", "Playoff experience off bench"],
+      playStyle: "Switchable defense + SGA creation", pace: "Moderate (99.0)", offRtg: 118.2, defRtg: 106.5,
+      systemFit: ["Switchable defenders", "3&D wings", "Versatile athletes", "Low-ego contributors"],
+      gLeague: "Oklahoma City Blue",
+      gLeagueNeeds: ["Wing", "Big man", "Guard depth"],
+      tankNote: "Defending champs. Pick via Clippers trade. Need depth pieces.",
+      gmStrategy: "Any switchable defender or 3&D wing who can contribute in playoffs."
+    },
+    {
+      pick: 29, team: "Boston Celtics", logo: "BOS",
+      record: "50-22", conf: "East",
+      needs: ["Center depth", "Wing insurance", "Youth"],
+      capSpace: -25.0, totalSalary: 179.6, capStatus: "Over luxury tax",
+      roster: { pg: "Jrue Holiday", sg: "Derrick White", sf: "Jaylen Brown", pf: "Jayson Tatum", c: "Kristaps Porzingis" },
+      rosterGaps: ["Porzingis health backup", "Wing depth", "Bench scoring"],
+      playStyle: "Switching defense + 3-point barrage", pace: "Fast (101.5)", offRtg: 118.5, defRtg: 107.8,
+      systemFit: ["Switchable defenders", "Elite shooters", "High-IQ players", "Versatile athletes"],
+      gLeague: "Maine Celtics",
+      gLeagueNeeds: ["Big man", "Wing", "Guard"],
+      tankNote: "Title contender with championship pedigree. Need depth.",
+      gmStrategy: "Versatile defender who can switch and shoot. Any position."
+    },
+    {
+      pick: 30, team: "LA Clippers", logo: "LAC",
+      record: "32-40", conf: "West",
+      needs: ["Wing scorer", "Star talent", "Athleticism"],
+      capSpace: -12.5, totalSalary: 167.1, capStatus: "Over 1st apron",
+      roster: { pg: "James Harden", sg: "Norman Powell", sf: "Kawhi Leonard", pf: "Ivica Zubac", c: "---" },
+      rosterGaps: ["Kawhi health", "Wing depth", "Youth needed", "Post-Harden planning"],
+      playStyle: "Iso-heavy, half-court", pace: "Slow (97.8)", offRtg: 112.2, defRtg: 112.8,
+      systemFit: ["Athletic wings", "Versatile scorers", "Defensive players", "Youth"],
+      gLeague: "San Diego Clippers",
+      gLeagueNeeds: ["Wing", "Guard", "Athletic big"],
+      tankNote: "Kawhi's health is the perpetual question. Aging core needs youth injection.",
+      gmStrategy: "Need young athletic wing who can eventually replace Kawhi's role. Upside pick."
+    }
+  ],
+
+  // ===== WNBA TEAM INTELLIGENCE =====
+  wnbaTeamNeeds: [
+    {
+      pick: 1, team: "Dallas Wings", logo: "DAL",
+      record: "8-32", needs: ["G", "Franchise player"],
+      capNote: "Max space available",
+      roster: { pg: "Odyssey Sims", sg: "Arike Ogunbowale", sf: "Natasha Howard", pf: "---", c: "Teaira McCowan" },
+      playStyle: "Arike iso-scoring", systemFit: ["Complementary guard", "Floor spacer", "Two-way G"],
+      gmStrategy: "Arike needs a backcourt partner who can shoot and defend."
+    },
+    {
+      pick: 2, team: "Portland Fire", logo: "POR",
+      record: "Expansion", needs: ["C", "Any position"],
+      capNote: "Full expansion cap",
+      roster: { pg: "---", sg: "---", sf: "---", pf: "---", c: "---" },
+      playStyle: "TBD - building from scratch", systemFit: ["Franchise cornerstone", "Any elite talent"],
+      gmStrategy: "Expansion team. Take best available player regardless of position."
+    },
+    {
+      pick: 3, team: "Toronto Tempo", logo: "TOR",
+      record: "Expansion", needs: ["G", "Any position"],
+      capNote: "Full expansion cap",
+      roster: { pg: "---", sg: "---", sf: "---", pf: "---", c: "---" },
+      playStyle: "TBD - building from scratch", systemFit: ["Franchise cornerstone", "Marketable star"],
+      gmStrategy: "Expansion team. Take best available player. Guard preferred for marketability."
+    },
+    {
+      pick: 4, team: "Los Angeles Sparks", logo: "LA",
+      record: "12-28", needs: ["G/F", "Scoring"],
+      capNote: "Moderate space",
+      roster: { pg: "Dearica Hamby", sg: "---", sf: "---", pf: "---", c: "---" },
+      playStyle: "Fast-paced", systemFit: ["Versatile scorer", "Athletic wing"],
+      gmStrategy: "Need a go-to scorer to rebuild around."
+    },
+    {
+      pick: 5, team: "Washington Mystics", logo: "WAS",
+      record: "14-26", needs: ["G", "Playmaker"],
+      capNote: "Some space",
+      roster: { pg: "---", sg: "Brittney Sykes", sf: "---", pf: "---", c: "---" },
+      playStyle: "Defensive-minded", systemFit: ["Playmaking guard", "Two-way player"],
+      gmStrategy: "Need a point guard who can run the offense and defend."
+    },
+    {
+      pick: 6, team: "Chicago Sky", logo: "CHI",
+      record: "15-25", needs: ["F", "Two-way player"],
+      capNote: "Limited space",
+      roster: { pg: "---", sg: "---", sf: "---", pf: "---", c: "Angel Reese" },
+      playStyle: "Interior-focused with Reese", systemFit: ["Perimeter shooter", "Two-way forward"],
+      gmStrategy: "Reese is the cornerstone. Need perimeter shooting and forward depth."
+    },
+    {
+      pick: 7, team: "Atlanta Dream", logo: "ATL",
+      record: "16-24", needs: ["G", "Scoring"],
+      capNote: "Moderate space",
+      roster: { pg: "---", sg: "---", sf: "---", pf: "---", c: "---" },
+      playStyle: "Balanced", systemFit: ["Volume scorer", "Dynamic guard"],
+      gmStrategy: "Need a go-to scorer who can create her own shot."
+    },
+    {
+      pick: 8, team: "Indiana Fever", logo: "IND",
+      record: "18-22", needs: ["C", "Interior presence"],
+      capNote: "Some space",
+      roster: { pg: "Caitlin Clark", sg: "Kelsey Mitchell", sf: "---", pf: "---", c: "---" },
+      playStyle: "Clark-centric playmaking", systemFit: ["Interior finisher", "Rim protector", "PnR big"],
+      gmStrategy: "Clark is the franchise. Need interior presence for PnR and rebounding."
+    },
+    {
+      pick: 9, team: "Phoenix Mercury", logo: "PHX",
+      record: "19-21", needs: ["G/F", "Wing depth"],
+      capNote: "Limited space",
+      roster: { pg: "---", sg: "---", sf: "---", pf: "---", c: "Brittney Griner" },
+      playStyle: "Griner-centric inside-out", systemFit: ["Perimeter scorer", "Versatile wing"],
+      gmStrategy: "Griner timeline closing. Need young perimeter talent for the future."
+    },
+    {
+      pick: 10, team: "Seattle Storm", logo: "SEA",
+      record: "20-20", needs: ["G", "Point guard"],
+      capNote: "Moderate space",
+      roster: { pg: "---", sg: "Nneka Ogwumike", sf: "---", pf: "---", c: "---" },
+      playStyle: "Balanced offense", systemFit: ["Floor general", "Defensive guard"],
+      gmStrategy: "Need a true point guard to orchestrate the offense long-term."
+    },
+    {
+      pick: 11, team: "Connecticut Sun", logo: "CON",
+      record: "22-18", needs: ["G", "Scoring guard", "Youth"],
+      capNote: "Limited space",
+      roster: { pg: "Ty Harris", sg: "DiJonai Carrington", sf: "DeWanna Bonner", pf: "Alyssa Thomas", c: "Brionna Jones" },
+      playStyle: "Defense-first, physical", systemFit: ["Tough defenders", "Scoring guard", "Shooters"],
+      gmStrategy: "Elite defense but aging. Need young scoring guard to pair with defensive core."
+    },
+    {
+      pick: 12, team: "Las Vegas Aces", logo: "LVA",
+      record: "24-16", needs: ["G/F", "Wing depth", "Bench scoring"],
+      capNote: "Tight cap",
+      roster: { pg: "Chelsea Gray", sg: "Kelsey Plum", sf: "---", pf: "A'ja Wilson", c: "Kiah Stokes" },
+      playStyle: "A'ja Wilson-centric + Plum/Gray playmaking", systemFit: ["Versatile wings", "Scorers", "Defenders"],
+      gmStrategy: "A'ja is the MVP. Need wing depth and bench scoring around the stars."
+    },
+    {
+      pick: 13, team: "New York Liberty", logo: "NYL",
+      record: "26-14", needs: ["C", "Post depth", "Interior defense"],
+      capNote: "Tight cap",
+      roster: { pg: "Sabrina Ionescu", sg: "Betnijah Laney-Hamilton", sf: "Breanna Stewart", pf: "Jonquel Jones", c: "---" },
+      playStyle: "Stewart/Ionescu-driven offense", systemFit: ["Interior presence", "Rim protector", "Rebounder"],
+      gmStrategy: "Contender with elite perimeter talent. Need interior depth and post presence."
+    }
+  ]
+};
+
+// Utility: compute draft score from stats
+function computeDraftScore(prospect) {
+  const s = prospect.seasonStats;
+  const t = prospect.tourneyStats;
+
+  // Weighted scoring formula
+  let score = 0;
+  score += s.ppg * 2.5;
+  score += s.rpg * 2.0;
+  score += s.apg * 2.5;
+  score += s.spg * 3.0;
+  score += s.bpg * 3.0;
+  score += (s.fgPct - 40) * 0.5;
+  score += (s.threePct > 0 ? (s.threePct - 30) * 0.4 : 0);
+  score += (s.ftPct - 70) * 0.3;
+  score += s.per * 1.5;
+  score += s.ts * 0.5;
+
+  // Tournament bonus (performance under pressure)
+  if (t.gamesPlayed > 0) {
+    const tourneyBonus = ((t.ppg - s.ppg) * 2 + (t.rpg - s.rpg) * 1.5 + (t.apg - s.apg) * 1.5);
+    score += Math.max(0, tourneyBonus) * 1.5;
+    score += Math.min(0, tourneyBonus) * 0.5; // Penalize less for underperformance
+  }
+
+  // Age bonus (younger = higher ceiling)
+  score += Math.max(0, (22 - prospect.age) * 3);
+
+  // NBA readiness
+  score += prospect.nbaReadiness * 0.3;
+
+  return Math.round(score * 10) / 10;
+}
+
+// ===== ENHANCED FIT SCORE WITH TEAM CONTEXT =====
+function computeFitScore(prospect, team) {
+  let fit = 30;
+  const pos = prospect.position;
+  const s = prospect.seasonStats;
+  const needs = team.needs || [];
+
+  // 1. Positional need match (0-25 pts)
+  for (const need of needs) {
+    if (pos.includes(need) || need.includes("Star") || need.includes("Franchise") || need.includes("Any")) fit += 12;
+    if (need.includes("Shooting") && s.threePct > 36) fit += 10;
+    if (need.includes("Defense") && (s.spg + s.bpg) > 2) fit += 10;
+    if (need.includes("Playmaker") && s.apg > 5) fit += 10;
+    if (need.includes("Rim protector") && s.bpg > 1.5) fit += 12;
+    if (need.includes("Scoring") && s.ppg > 16) fit += 10;
+    if (need.includes("Interior") && (pos.includes("C") || pos.includes("PF"))) fit += 10;
+    if (need.includes("3&D") && s.threePct > 35 && (s.spg + s.bpg) > 1.5) fit += 12;
+    if (need.includes("Perimeter") && (pos.includes("SG") || pos.includes("SF"))) fit += 8;
+  }
+
+  // 2. System/playing style match (0-15 pts)
+  if (team.systemFit) {
+    for (const trait of team.systemFit) {
+      if (trait.includes("Shooter") && s.threePct > 36) fit += 5;
+      if (trait.includes("Floor spacer") && s.threePct > 35) fit += 5;
+      if (trait.includes("Defensive") && (s.spg + s.bpg) > 2) fit += 5;
+      if (trait.includes("Athletic") && prospect.ceiling > 88) fit += 4;
+      if (trait.includes("Playmaking") && s.apg > 4) fit += 4;
+      if (trait.includes("PnR") && (s.apg > 4 || pos.includes("C"))) fit += 4;
+      if (trait.includes("Versatile") && pos.includes("/")) fit += 3;
+      if (trait.includes("High-IQ") && s.per > 22) fit += 4;
+      if (trait.includes("Switchable") && pos.includes("/")) fit += 3;
+      if (trait.includes("Off-ball") && s.threePct > 34) fit += 3;
+      if (trait.includes("run the floor") && prospect.nbaReadiness > 75) fit += 3;
+    }
+  }
+
+  // 3. Roster gap fill (0-10 pts)
+  if (team.roster) {
+    const r = team.roster;
+    if (pos.includes("PG") && (!r.pg || r.pg === "---")) fit += 10;
+    if (pos.includes("SG") && (!r.sg || r.sg === "---")) fit += 10;
+    if (pos.includes("SF") && (!r.sf || r.sf === "---")) fit += 10;
+    if (pos.includes("PF") && (!r.pf || r.pf === "---")) fit += 10;
+    if (pos.includes("C") && (!r.c || r.c === "---")) fit += 10;
+  }
+
+  // 4. Cap space compatibility (0-5 pts) — rookies fit any cap
+  if (team.capSpace && team.capSpace > 20) fit += 3; // More space = more flexibility
+  if (team.capStatus && team.capStatus.includes("Massive")) fit += 5;
+
+  return Math.min(99, Math.round(fit));
+}
+
+// ===== BEST PLAYER AVAILABLE (BPA) ALGORITHM =====
+function computeBPA(prospects) {
+  return prospects.map(p => {
+    const score = computeDraftScore(p);
+    // BPA factors: raw talent (score), tournament performance, age, ceiling
+    let bpa = score;
+    bpa += (p.ceiling - 70) * 0.8;
+    bpa += (100 - p.floor) * -0.3; // Penalize low floors
+    bpa += Math.max(0, (22 - p.age)) * 2; // Youth premium
+    if (p.tourneyStats.gamesPlayed > 0 && p.tourneyStats.ppg > p.seasonStats.ppg) bpa += 5;
+    return { ...p, bpaScore: Math.round(bpa * 10) / 10 };
+  }).sort((a, b) => b.bpaScore - a.bpaScore);
+}
+
+// ===== GM RECOMMENDATION ENGINE =====
+function getGMRecommendation(team, prospects) {
+  const bpaList = computeBPA(prospects);
+  const results = bpaList.map((p, bpaRank) => {
+    const fitScore = computeFitScore(p, team);
+    const bpaScore = p.bpaScore;
+    // Composite: 55% fit, 35% BPA, 10% readiness
+    const composite = (fitScore * 0.55) + (bpaScore / 3 * 0.35) + (p.nbaReadiness * 0.10);
+    return {
+      prospect: p,
+      fitScore,
+      bpaRank: bpaRank + 1,
+      bpaScore,
+      composite: Math.round(composite * 10) / 10,
+      recommendation: fitScore >= 75 && bpaRank <= 5 ? "STRONG FIT" :
+                       fitScore >= 60 && bpaRank <= 10 ? "GOOD FIT" :
+                       fitScore >= 75 ? "NEED FIT" :
+                       bpaRank <= 3 ? "BPA PICK" : "REACH",
+      gLeaguePath: p.nbaReadiness < 75 ? "G-League development recommended" :
+                   p.nbaReadiness < 85 ? "Spot minutes + G-League seasoning" :
+                   "NBA ready Day 1"
+    };
+  }).sort((a, b) => b.composite - a.composite);
+
+  return results;
+}
