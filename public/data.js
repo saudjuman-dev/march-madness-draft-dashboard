@@ -1997,10 +1997,13 @@ function computeDraftScore(prospect) {
   score += s.ts * 0.5;
 
   // Tournament bonus (performance under pressure)
-  if (t.gamesPlayed > 0) {
+  if (t && t.gamesPlayed > 0) {
     const tourneyBonus = ((t.ppg - s.ppg) * 2 + (t.rpg - s.rpg) * 1.5 + (t.apg - s.apg) * 1.5);
     score += Math.max(0, tourneyBonus) * 1.5;
     score += Math.min(0, tourneyBonus) * 0.5; // Penalize less for underperformance
+  } else if (!t) {
+    // International prospect: small pro-experience bonus but no tourney boost
+    score += 3;
   }
 
   // Age bonus (younger = higher ceiling)
@@ -2075,7 +2078,7 @@ function computeBPA(prospects) {
     bpa += (p.ceiling - 70) * 0.8;
     bpa += (100 - p.floor) * -0.3; // Penalize low floors
     bpa += Math.max(0, (22 - p.age)) * 2; // Youth premium
-    if (p.tourneyStats.gamesPlayed > 0 && p.tourneyStats.ppg > p.seasonStats.ppg) bpa += 5;
+    if (p.tourneyStats && p.tourneyStats.gamesPlayed > 0 && p.tourneyStats.ppg > p.seasonStats.ppg) bpa += 5;
     return { ...p, bpaScore: Math.round(bpa * 10) / 10 };
   }).sort((a, b) => b.bpaScore - a.bpaScore);
 }
