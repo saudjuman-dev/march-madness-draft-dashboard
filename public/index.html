@@ -167,6 +167,22 @@
     }
     .filter-btn:hover, .filter-btn.active { border-color: var(--accent-blue); color: var(--accent-blue); background: rgba(59,130,246,0.08); }
 
+    /* League badges */
+    .league-badge {
+      display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px;
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
+    }
+    .league-ncaa { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+    .league-nbl { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+    .league-euro { background: rgba(167,139,250,0.15); color: #a78bfa; border: 1px solid rgba(167,139,250,0.3); }
+    .league-asia { background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+    .league-latam { background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+    .league-intl { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
+    .league-filter.active.league-ncaa-active { border-color: #60a5fa !important; color: #60a5fa !important; }
+    .league-filter.active.league-nbl-active { border-color: #fbbf24 !important; color: #fbbf24 !important; }
+    .league-filter.active.league-euro-active { border-color: #a78bfa !important; color: #a78bfa !important; }
+    .league-filter.active.league-asia-active { border-color: #f87171 !important; color: #f87171 !important; }
+
     /* ========== PROSPECT TABLE ========== */
     .draft-board {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
@@ -581,6 +597,12 @@
         <button class="filter-btn" data-filter="PF">PF</button>
         <button class="filter-btn" data-filter="C">C</button>
         <button class="filter-btn" data-filter="rising">Rising</button>
+        <span style="width:1px;height:24px;background:var(--border);margin:0 8px;display:inline-block"></span>
+        <button class="filter-btn league-filter" data-filter="league-NCAA">🏫 NCAA</button>
+        <button class="filter-btn league-filter" data-filter="league-INTL">🌍 Int'l</button>
+        <button class="filter-btn league-filter" data-filter="league-NBL">🦘 NBL</button>
+        <button class="filter-btn league-filter" data-filter="league-EURO">🇪🇺 Euro</button>
+        <button class="filter-btn league-filter" data-filter="league-ASIA">🌏 Asia</button>
       </div>
     </div>
     <div class="draft-board">
@@ -589,6 +611,7 @@
           <tr>
             <th>Rank</th>
             <th>Player</th>
+            <th>League</th>
             <th>PPG</th>
             <th>RPG</th>
             <th>APG</th>
@@ -618,6 +641,9 @@
         <button class="filter-btn" data-filter="F">Forward</button>
         <button class="filter-btn" data-filter="C">Center</button>
         <button class="filter-btn" data-filter="rising">Rising</button>
+        <span style="width:1px;height:24px;background:var(--border);margin:0 8px;display:inline-block"></span>
+        <button class="filter-btn league-filter" data-filter="league-NCAA">🏫 NCAA</button>
+        <button class="filter-btn league-filter" data-filter="league-INTL">🌍 Int'l</button>
       </div>
     </div>
     <div class="draft-board">
@@ -626,6 +652,7 @@
           <tr>
             <th>Rank</th>
             <th>Player</th>
+            <th>League</th>
             <th>PPG</th>
             <th>RPG</th>
             <th>APG</th>
@@ -757,10 +784,10 @@ function renderTicker() {
   const mensProspects = TOURNAMENT_DATA.mens.prospects;
   const womensProspects = TOURNAMENT_DATA.womens.prospects;
   const risers = [...mensProspects, ...womensProspects].filter(p => p.stockChange > 0);
-  const topScorer = [...mensProspects].sort((a,b) => b.tourneyStats.ppg - a.tourneyStats.ppg)[0];
+  const topScorer = [...mensProspects].filter(p => p.tourneyStats && p.tourneyStats.gamesPlayed > 0).sort((a,b) => b.tourneyStats.ppg - a.tourneyStats.ppg)[0];
 
   const cards = [
-    { label: 'Active Prospects', value: mensProspects.length + womensProspects.length, sub: `${mensProspects.length} NBA + ${womensProspects.length} WNBA`, cls: 'value-blue' },
+    { label: 'Active Prospects', value: mensProspects.length + womensProspects.length, sub: `${mensProspects.length} NBA + ${womensProspects.length} WNBA \u2022 ${mensProspects.filter(p=>p.league&&p.league!=='NCAA').length + womensProspects.filter(p=>p.league&&p.league!=='NCAA').length} Int'l`, cls: 'value-blue' },
     { label: '#1 Pick (NBA)', value: mensProspects.find(p => p.currentProjection === 1)?.name || '--', sub: mensProspects.find(p => p.currentProjection === 1)?.team || '', cls: 'value-purple', small: true },
     { label: '#1 Pick (WNBA)', value: womensProspects.find(p => p.currentProjection === 1)?.name || '--', sub: womensProspects.find(p => p.currentProjection === 1)?.team || '', cls: 'value-pink', small: true },
     { label: 'Stock Risers', value: risers.length, sub: `Biggest: +${Math.max(...risers.map(r => r.stockChange))} spots`, cls: 'value-green' },
@@ -776,10 +803,47 @@ function renderTicker() {
 }
 
 // ===== DRAFT BOARD =====
+// League badge helper
+function getLeagueBadge(league) {
+  if (!league) return { label: 'NCAA', cls: 'league-ncaa', icon: '🏫' };
+  const l = league.toLowerCase();
+  if (l.includes('ncaa')) return { label: 'NCAA', cls: 'league-ncaa', icon: '🏫' };
+  if (l.includes('nbl')) return { label: 'NBL', cls: 'league-nbl', icon: '🦘' };
+  if (l.includes('acb') || l.includes('euroleague') || l.includes('greek') || l.includes('lnb france') || l.includes('lfb') || l.includes('liga fem') || l.includes('aba') || l.includes('german') || l.includes('bbl')) return { label: l.includes('euroleague') ? 'EuroLg' : l.includes('acb') ? 'ACB' : l.includes('greek') ? 'Greek' : l.includes('aba') ? 'ABA' : l.includes('lfb') || l.includes('liga fem') ? league.split(' ')[0] : 'Europe', cls: 'league-euro', icon: '🇪🇺' };
+  if (l.includes('b.league') || l.includes('japan') || l.includes('cba') || l.includes('kbl') || l.includes('korea') || l.includes('p.league') || l.includes('taiwan') || l.includes('asia') || l.includes('pba') || l.includes('philip')) return { label: l.includes('japan') || l.includes('b.league') ? 'B.Lg' : l.includes('cba') ? 'CBA' : l.includes('kbl') || l.includes('korea') ? 'KBL' : 'Asia', cls: 'league-asia', icon: '🌏' };
+  if (l.includes('nbb') || l.includes('brazil') || l.includes('arg') || l.includes('south america')) return { label: 'S.Am', cls: 'league-latam', icon: '🌎' };
+  if (l.includes('russia')) return { label: 'Russia', cls: 'league-euro', icon: '🇷🇺' };
+  return { label: league.split(' ')[0].substring(0,6), cls: 'league-intl', icon: '🌍' };
+}
+
+function getLeagueCategory(league) {
+  if (!league) return 'NCAA';
+  const l = league.toLowerCase();
+  if (l.includes('ncaa')) return 'NCAA';
+  if (l.includes('nbl')) return 'NBL';
+  if (l.includes('acb') || l.includes('euroleague') || l.includes('greek') || l.includes('lnb') || l.includes('lfb') || l.includes('liga fem') || l.includes('aba') || l.includes('german') || l.includes('russia')) return 'EURO';
+  if (l.includes('b.league') || l.includes('japan') || l.includes('cba') || l.includes('kbl') || l.includes('korea') || l.includes('p.league') || l.includes('taiwan') || l.includes('asia') || l.includes('pba')) return 'ASIA';
+  return 'INTL';
+}
+
+// Active league filter state
+let activeLeagueFilter = { nba: null, wnba: null };
+
 function renderDraftBoard(type) {
   const prospects = type === 'nba' ? TOURNAMENT_DATA.mens.prospects : TOURNAMENT_DATA.womens.prospects;
   const teamNeeds = type === 'nba' ? TOURNAMENT_DATA.nbaTeamNeeds : TOURNAMENT_DATA.wnbaTeamNeeds;
-  const sorted = [...prospects].sort((a,b) => a.currentProjection - b.currentProjection);
+  let sorted = [...prospects].sort((a,b) => a.currentProjection - b.currentProjection);
+
+  // Apply league filter
+  const lf = activeLeagueFilter[type];
+  if (lf) {
+    if (lf === 'INTL') {
+      sorted = sorted.filter(p => getLeagueCategory(p.league) !== 'NCAA');
+    } else {
+      sorted = sorted.filter(p => getLeagueCategory(p.league) === lf);
+    }
+  }
+
   const bodyId = type === 'nba' ? 'nbaDraftBody' : 'wnbaDraftBody';
 
   document.getElementById(bodyId).innerHTML = sorted.map((p, i) => {
@@ -792,8 +856,11 @@ function renderDraftBoard(type) {
     const trendLabel = p.stockChange > 0 ? `+${p.stockChange}` : p.stockChange < 0 ? `${p.stockChange}` : '--';
     const pickCls = p.currentProjection <= 3 ? `pick-${p.currentProjection}` : '';
     const readyColor = p.nbaReadiness >= 85 ? 'var(--accent-green)' : p.nbaReadiness >= 70 ? 'var(--accent-orange)' : 'var(--accent-red)';
-    const tPpg = p.tourneyStats.gamesPlayed > 0 ? p.tourneyStats.ppg.toFixed(1) : 'N/A';
-    const tPpgCls = p.tourneyStats.gamesPlayed > 0 && p.tourneyStats.ppg > p.seasonStats.ppg ? 'stat-highlight' : '';
+    const hasTourney = p.tourneyStats && p.tourneyStats.gamesPlayed > 0;
+    const tPpg = hasTourney ? p.tourneyStats.ppg.toFixed(1) : '--';
+    const tPpgCls = hasTourney && p.tourneyStats.ppg > p.seasonStats.ppg ? 'stat-highlight' : '';
+    const badge = getLeagueBadge(p.league);
+    const flagEmoji = p.nationality === 'USA' ? '🇺🇸' : p.nationality === 'Mexico' ? '🇲🇽' : p.nationality === 'Australia' ? '🇦🇺' : p.nationality === 'Spain' ? '🇪🇸' : p.nationality === 'Greece' ? '🇬🇷' : p.nationality === 'Belgium' ? '🇧🇪' : p.nationality === 'France' ? '🇫🇷' : p.nationality === 'Serbia' ? '🇷🇸' : p.nationality === 'Croatia' ? '🇭🇷' : p.nationality === 'Germany' ? '🇩🇪' : p.nationality === 'Canada' ? '🇨🇦' : p.nationality === 'Japan' ? '🇯🇵' : p.nationality === 'Chinese Taipei' ? '🇹🇼' : p.nationality === 'Russia' ? '🇷🇺' : p.nationality === 'Brazil' ? '🇧🇷' : p.nationality === 'China' ? '🇨🇳' : p.nationality === 'South Korea' ? '🇰🇷' : p.nationality === 'Philippines' ? '🇵🇭' : p.nationality === 'Nigeria' ? '🇳🇬' : p.nationality === 'Argentina' ? '🇦🇷' : p.nationality === 'Turkey' ? '🇹🇷' : p.nationality === 'Israel' ? '🇮🇱' : p.nationality === 'Italy' ? '🇮🇹' : p.nationality === 'Lithuania' ? '🇱🇹' : '🌍';
 
     return `<tr class="fade-in" style="animation-delay:${i*50}ms; cursor:pointer" onclick="openModal('${p.id}','${type}')">
       <td><span class="pick-num ${pickCls}">${p.currentProjection}</span></td>
@@ -803,11 +870,12 @@ function renderDraftBoard(type) {
             ${PLAYER_HEADSHOTS[p.id] ? `<img src="${PLAYER_HEADSHOTS[p.id]}" alt="${p.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" onerror="this.style.display='none';this.parentElement.innerHTML='${p.name.split(' ').map(n=>n[0]).join('')}'">` : p.name.split(' ').map(n=>n[0]).join('')}
           </div>
           <div class="player-details">
-            <div class="player-name">${p.name}</div>
+            <div class="player-name">${flagEmoji} ${p.name}</div>
             <div class="player-meta">${p.position} &bull; ${p.team} &bull; ${p.height} &bull; ${p.year}</div>
           </div>
         </div>
       </td>
+      <td><span class="league-badge ${badge.cls}">${badge.icon} ${badge.label}</span></td>
       <td class="stat-cell">${p.seasonStats.ppg}</td>
       <td class="stat-cell">${p.seasonStats.rpg}</td>
       <td class="stat-cell">${p.seasonStats.apg}</td>
@@ -1019,7 +1087,7 @@ function openModal(id, type) {
         </div>
         <div>
           <div class="modal-player-name">${p.name}</div>
-          <div class="modal-player-sub">${p.position} &bull; ${p.team} &bull; ${p.height} / ${p.weight}lbs &bull; ${p.year} &bull; Age ${p.age} &bull; ${p.nationality}</div>
+          <div class="modal-player-sub">${p.position} &bull; ${p.team} &bull; ${p.height} / ${p.weight}lbs &bull; ${p.year} &bull; Age ${p.age} &bull; ${p.nationality} &bull; <span class="league-badge ${getLeagueBadge(p.league).cls}">${getLeagueBadge(p.league).icon} ${p.league || 'NCAA'}</span></div>
         </div>
       </div>
       <button class="modal-close" onclick="closeModal()">&times;</button>
@@ -1040,7 +1108,8 @@ function openModal(id, type) {
           ${statRow('TS%', s.ts + '%')}
         </div>
         <div class="stat-box">
-          <h3>Tournament Stats ${t.gamesPlayed > 0 ? `(${t.gamesPlayed} games)` : '(Not played)'}</h3>
+          <h3>${t ? (t.gamesPlayed > 0 ? `Tournament Stats (${t.gamesPlayed} games)` : 'Tournament Stats (Not played)') : `League Stats (${p.league || 'Pro'})`}</h3>
+          ${t ? `
           ${statRowCompare('Points', t.ppg, s.ppg, t.gamesPlayed)}
           ${statRowCompare('Rebounds', t.rpg, s.rpg, t.gamesPlayed)}
           ${statRowCompare('Assists', t.apg, s.apg, t.gamesPlayed)}
@@ -1049,6 +1118,15 @@ function openModal(id, type) {
           ${statRowCompare('FG%', t.fgPct, s.fgPct, t.gamesPlayed, '%')}
           ${statRowCompare('3P%', t.threePct, s.threePct, t.gamesPlayed, '%')}
           ${statRowCompare('FT%', t.ftPct, s.ftPct, t.gamesPlayed, '%')}
+          ` : `
+          <div style="padding:16px;color:var(--text-muted);text-align:center;font-size:13px">
+            <div style="font-size:24px;margin-bottom:8px">🌍</div>
+            <div>International prospect — no NCAA tournament stats.</div>
+            <div style="margin-top:8px"><strong>League:</strong> ${p.league}</div>
+            <div><strong>Nationality:</strong> ${p.nationality}</div>
+            <div style="margin-top:8px;font-style:italic">Season stats shown are from ${p.league} competition.</div>
+          </div>
+          `}
         </div>
       </div>
 
@@ -1147,11 +1225,33 @@ function bindTabs() {
 // ===== FILTERS =====
 function bindFilters() {
   document.querySelectorAll('.filters').forEach(filterGroup => {
-    filterGroup.querySelectorAll('.filter-btn').forEach(btn => {
+    filterGroup.querySelectorAll('.filter-btn:not(.league-filter)').forEach(btn => {
       btn.addEventListener('click', () => {
-        filterGroup.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        filterGroup.querySelectorAll('.filter-btn:not(.league-filter)').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         applyFilter(btn.dataset.filter, filterGroup);
+      });
+    });
+    // League filter buttons - toggle behavior + re-render
+    filterGroup.querySelectorAll('.league-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const isActive = btn.classList.contains('active');
+        filterGroup.querySelectorAll('.league-filter').forEach(b => b.classList.remove('active'));
+        const tabContent = filterGroup.closest('.tab-content');
+        const type = tabContent.id === 'tab-nba' ? 'nba' : 'wnba';
+        if (isActive) {
+          activeLeagueFilter[type] = null;
+        } else {
+          btn.classList.add('active');
+          const cat = btn.dataset.filter.replace('league-', '');
+          activeLeagueFilter[type] = cat;
+        }
+        renderDraftBoard(type);
+        // Re-apply position filter if any
+        const activePositionBtn = filterGroup.querySelector('.filter-btn.active:not(.league-filter)');
+        if (activePositionBtn && activePositionBtn.dataset.filter !== 'all') {
+          applyFilter(activePositionBtn.dataset.filter, filterGroup);
+        }
       });
     });
   });
