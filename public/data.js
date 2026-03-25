@@ -1449,16 +1449,16 @@ const TOURNAMENT_DATA = {
   nbaTeamNeeds: [
     {
       pick: 1, team: "Indiana Pacers", logo: "IND",
-      record: "14-58", conf: "East",
+      record: "10-62", conf: "East",
       needs: ["PF/C", "Star talent", "Franchise player"],
       capSpace: 12.5, totalSalary: 142.1, capStatus: "Under cap",
-      roster: { pg: "Andrew Nembhard", sg: "Ben Shepard", sf: "Jarace Walker", pf: "---", c: "Myles Turner" },
-      rosterGaps: ["No elite scorer", "Power forward hole", "Need franchise cornerstone"],
+      roster: { pg: "Andrew Nembhard", sg: "Ben Sheppard", sf: "Jarace Walker", pf: "Asa Newell", c: "Ivica Zubac" },
+      rosterGaps: ["Haliburton out all season (torn Achilles)", "Multiple injuries all year", "Need franchise cornerstone"],
       playStyle: "Motion offense", pace: "Fast (102.1)", offRtg: 105.2, defRtg: 116.8,
       systemFit: ["Versatile bigs who pass", "High-IQ players", "Switchable defenders"],
       gLeague: "Noblesville Boom",
       gLeagueNeeds: ["Wing development", "Backup PG", "Stretch 4"],
-      tankNote: "16-game losing streak. Pick is top-4 protected; if 5-9 goes to Clippers.",
+      tankNote: "Haliburton out all year. Traded Mathurin/Jackson to Clippers for Zubac. 16-game losing streak.",
       gmStrategy: "Full rebuild. Need a franchise cornerstone. BPA regardless of position."
     },
     {
@@ -1466,13 +1466,13 @@ const TOURNAMENT_DATA = {
       record: "15-57", conf: "East",
       needs: ["PG", "Wing", "Star talent"],
       capSpace: 18.2, totalSalary: 136.4, capStatus: "Under cap",
-      roster: { pg: "Bilal Coulibaly", sg: "Jordan Poole", sf: "Kyle Kuzma", pf: "Alex Sarr", c: "Jonas Valanciunas" },
-      rosterGaps: ["No true point guard", "Need perimeter creator", "Lack of defensive identity"],
+      roster: { pg: "Trae Young", sg: "Tre Johnson", sf: "Corey Kispert", pf: "Alex Sarr", c: "Anthony Davis" },
+      rosterGaps: ["Young and Davis acquired but injured", "Need healthy star to build around", "Defensive identity absent"],
       playStyle: "Transition-heavy", pace: "Fast (103.5)", offRtg: 106.1, defRtg: 117.2,
       systemFit: ["Dynamic playmakers", "Transition scorers", "Perimeter defenders"],
       gLeague: "Capital City Go-Go",
       gLeagueNeeds: ["Point guard development", "3&D wing", "Backup center"],
-      tankNote: "Also on 16-game losing streak. Sarr is building block; need a backcourt star.",
+      tankNote: "Acquired Trae Young from Hawks + Anthony Davis in 3-team deal. Both recovering from injuries.",
       gmStrategy: "Have young pieces (Sarr, Coulibaly). Desperate for elite guard to build around."
     },
     {
@@ -1480,13 +1480,13 @@ const TOURNAMENT_DATA = {
       record: "17-55", conf: "East",
       needs: ["PG", "Wing", "Franchise player"],
       capSpace: 91.8, totalSalary: 62.8, capStatus: "Massive cap space ($91.8M)",
-      roster: { pg: "Dennis Schroder", sg: "Cam Thomas", sf: "Cam Johnson", pf: "Dorian Finney-Smith", c: "Day'Ron Sharpe" },
-      rosterGaps: ["No franchise player", "Need star wing or PG", "Lack of defensive anchor"],
+      roster: { pg: "Egor Demin", sg: "Michael Porter Jr.", sf: "Ziaire Williams", pf: "Day'Ron Sharpe", c: "Danny Wolf" },
+      rosterGaps: ["Cam Thomas waived/traded", "Five 1st-round rookies developing", "No established star"],
       playStyle: "Iso-heavy", pace: "Average (99.2)", offRtg: 107.8, defRtg: 115.6,
       systemFit: ["Shot creators", "High-usage scorers", "Athletic wings"],
       gLeague: "Long Island Nets",
       gLeagueNeeds: ["Young guard development", "Wing depth", "Stretch big"],
-      tankNote: "$91.8M in cap space. Can absorb salary in trades AND draft a star.",
+      tankNote: "Historic rebuild: 5 first-round picks in 2025. Traded Cam Johnson to Nuggets for MPJ. $91.8M cap space.",
       gmStrategy: "Nuclear rebuild with historic cap space. BPA + use money to acquire more picks."
     },
     {
@@ -1494,13 +1494,13 @@ const TOURNAMENT_DATA = {
       record: "19-53", conf: "West",
       needs: ["PF/C", "Rim protector", "Two-way wing"],
       capSpace: -8.5, totalSalary: 163.1, capStatus: "Over 1st apron",
-      roster: { pg: "De'Aaron Fox", sg: "Malik Monk", sf: "DeMar DeRozan", pf: "Keegan Murray", c: "Domantas Sabonis" },
-      rosterGaps: ["No rim protection", "Aging core", "Defensive identity completely absent"],
+      roster: { pg: "Russell Westbrook", sg: "Zach LaVine", sf: "DeMar DeRozan", pf: "Keegan Murray", c: "Drew Eubanks" },
+      rosterGaps: ["Sabonis out for season", "LaVine & DeAndre Hunter also out", "16-game losing streak"],
       playStyle: "Fast pace, high scoring", pace: "Very fast (104.8)", offRtg: 114.2, defRtg: 118.5,
       systemFit: ["Rim protectors", "Switchable bigs", "Defensive anchors", "Players who run the floor"],
       gLeague: "Stockton Kings",
       gLeagueNeeds: ["Defensive big man", "3&D wing", "Backup PG"],
-      tankNote: "Won 5 of last 8, sliding to 4th. Bloated payroll; trades expected.",
+      tankNote: "16-game losing streak, longest in franchise history. Sabonis/LaVine out for year. GM Scott Perry took over.",
       gmStrategy: "Need to address horrific defense. Rim protector or versatile defensive big is priority."
     },
     {
@@ -1508,13 +1508,13 @@ const TOURNAMENT_DATA = {
       record: "21-51", conf: "West",
       needs: ["PG", "Star wing", "Franchise scorer"],
       capSpace: 6.8, totalSalary: 147.8, capStatus: "Under cap",
-      roster: { pg: "Keyonte George", sg: "Collin Sexton", sf: "Lauri Markkanen", pf: "Walker Kessler", c: "John Collins" },
-      rosterGaps: ["No elite perimeter creator", "Frontcourt logjam", "Need a true #1 option"],
+      roster: { pg: "Keyonte George", sg: "Ace Bailey", sf: "Lauri Markkanen", pf: "Kyle Filipowski", c: "Walker Kessler" },
+      rosterGaps: ["No elite perimeter creator", "Young roster still developing", "Need a true #1 option"],
       playStyle: "Half-court oriented", pace: "Slow (96.8)", offRtg: 108.5, defRtg: 114.2,
       systemFit: ["Ball-dominant guards", "Perimeter scorers", "Players who create for others"],
       gLeague: "Salt Lake City Stars",
       gLeagueNeeds: ["Point guard", "Wing scorer", "Stretch 4"],
-      tankNote: "Fined for resting top players. Positioning for lottery.",
+      tankNote: "Fined by NBA for resting top players. Bailey (5th pick) and George developing. Sexton traded for Nurkic.",
       gmStrategy: "Markkanen/Kessler give frontcourt foundation. Need elite guard or wing scorer."
     },
     {
@@ -1589,7 +1589,7 @@ const TOURNAMENT_DATA = {
     },
     {
       pick: 11, team: "San Antonio Spurs", logo: "SAS",
-      record: "27-45", conf: "West",
+      record: "54-18", conf: "West",
       needs: ["SG", "3&D wing", "Perimeter shooting"],
       capSpace: 5.5, totalSalary: 149.1, capStatus: "Near cap",
       roster: { pg: "Chris Paul", sg: "Devin Vassell", sf: "Keldon Johnson", pf: "Jeremy Sochan", c: "Victor Wembanyama" },
@@ -1603,7 +1603,7 @@ const TOURNAMENT_DATA = {
     },
     {
       pick: 12, team: "Atlanta Hawks", logo: "ATL",
-      record: "28-44", conf: "East",
+      record: "40-32", conf: "East",
       needs: ["SF/PF", "Defense", "Two-way wing"],
       capSpace: 3.2, totalSalary: 151.4, capStatus: "Near cap",
       roster: { pg: "Trae Young", sg: "Dyson Daniels", sf: "Zaccharie Risacher", pf: "Jalen Johnson", c: "Onyeka Okongwu" },
@@ -1617,7 +1617,7 @@ const TOURNAMENT_DATA = {
     },
     {
       pick: 13, team: "Portland Trail Blazers", logo: "POR",
-      record: "29-43", conf: "West",
+      record: "36-37", conf: "West",
       needs: ["Wing scorer", "PG depth", "Shooting"],
       capSpace: 10.8, totalSalary: 143.8, capStatus: "Under cap",
       roster: { pg: "Scoot Henderson", sg: "Shaedon Sharpe", sf: "Deni Avdija", pf: "Deandre Ayton", c: "Robert Williams III" },
@@ -1631,7 +1631,7 @@ const TOURNAMENT_DATA = {
     },
     {
       pick: 14, team: "Detroit Pistons", logo: "DET",
-      record: "30-42", conf: "East",
+      record: "50-19", conf: "East",
       needs: ["SG", "Shooting", "Wing depth"],
       capSpace: 24.6, totalSalary: 130.0, capStatus: "Under cap",
       roster: { pg: "Cade Cunningham", sg: "Jaden Ivey", sf: "Ausar Thompson", pf: "Tobias Harris", c: "Jalen Duren" },
@@ -1813,7 +1813,7 @@ const TOURNAMENT_DATA = {
     },
     {
       pick: 27, team: "Toronto Raptors", logo: "TOR",
-      record: "28-44", conf: "East",
+      record: "40-31", conf: "East",
       needs: ["PG", "Star wing", "Franchise cornerstone"],
       capSpace: 15.8, totalSalary: 138.8, capStatus: "Under cap",
       roster: { pg: "Immanuel Quickley", sg: "Gradey Dick", sf: "RJ Barrett", pf: "Scottie Barnes", c: "Jakob Poeltl" },
